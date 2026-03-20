@@ -4,7 +4,7 @@ Desarrollamos un sistema web de gestión de inventario para una ferretería que 
 
 | Nombre              | Rol          | GitHub           |
 |---------------------|--------------|------------------|
-| Santiago Gonzalez   | Scrum Master | @santy-ngonzales |
+| Santiago Gonzalez   | Scrum Master | @santi-ngonzalez |
 | Luciano Fohrholtz   | Dev Lead     | @luchofohrholz   |
 | Juan Carlos Abente  | QA Lead      | @juankiabente    |
 | Mariano Acosta      | UX Lead      | @mittax6         |
