@@ -15,7 +15,7 @@ Un esqueleto con los métodos calcularPrioridad() y asignarTurno().
 - Agregamos validación de null en asignarTurno() que la IA no incluyó.
 - Eliminamos un método getAll() que no corresponde al patrón Strategy.
 
-## Entrada 001 — Tabla de integrantes y roles del equipo
+## Entrada 001 — Tabla de integrantes y roles del equipo — Semana 1
 
 **Herramienta:** ChatGPT  
 **Responsable:** Dev lead
@@ -33,7 +33,7 @@ Una tabla estructurada con columnas de nombre, rol y GitHub, lista para pegar en
 
 ---
 
-## Entrada 002 — Organización inicial del repositorio GitHub
+## Entrada 002 — Organización inicial del repositorio GitHub — Semana 1
 
 **Herramienta:** ChatGPT  
 **Responsable:** Dev Lead  
@@ -50,7 +50,7 @@ Una propuesta de estructura de carpetas y organización del repositorio, orienta
 
 ---
 
-## Entrada 003 — Gestión de colaboradores en GitHub
+## Entrada 003 — Gestión de colaboradores en GitHub — Semana 1
 
 **Herramienta:** ChatGPT  
 **Responsable:** Scrum Master / Dev Lead  
