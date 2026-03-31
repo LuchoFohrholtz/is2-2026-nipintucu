@@ -13,4 +13,5 @@ Desarrollamos un sistema web de gestión de inventario para una ferretería que 
 
 ## Enlaces Rápidos
 * [Tablero Kanban (GitHub Projects)](https://github.com/users/LuchoFohrholtz/projects/1)
+* [Matriz de Riegos](https://github.com/LuchoFohrholtz/is2-2026-nipintucu/blob/main/docs/matriz-de-riesgos.md)
 
