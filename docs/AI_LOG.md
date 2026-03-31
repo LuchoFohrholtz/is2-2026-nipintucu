@@ -48,7 +48,7 @@ Instrucciones paso a paso para agregar colaboradores, ubicar la opción correcta
 - Se aplicaron los pasos al repositorio concreto del proyecto.  
 - Se validó que los miembros puedan editar y participar del tablero.
 
-Entrada 004 — Estrategias de la Matriz de Riesgos — Semana 2
+## Entrada 004 — Estrategias de la Matriz de Riesgos — Semana 2
 
 **Herramienta:** ChatGPT
 **Responsable:** Scrum Master / Dev Lead
@@ -64,7 +64,7 @@ Un texto detallado con acciones específicas para cada riesgo, abarcando desde l
 
 ---
 
-Entrada 005 — Generación de Código Mermaid para Diagrama de Clases — Semana 2
+## Entrada 005 — Generación de Código Mermaid para Diagrama de Clases — Semana 2
 
 **Herramienta:** ChatGPT
 **Responsable:** Dev Lead
@@ -78,3 +78,20 @@ Un bloque de código `classDiagram` y `flowchart LR` con las instancias de objet
 * Refinamos el diagrama inicial propuesto por la IA (que era un diagrama de clases completo) a un `flowchart LR` más simple para cumplir estrictamente con el nivel de detalle requerido en la protoclase 1.
 * Modificamos la entidad genérica "Usuario" sugerida por la IA, separándola en "Empleado" y "Cliente" para reflejar mejor el proceso de venta real en el mostrador. Y luego modificamos los datos colocando ejemplos que sean mas acordes a nuestra ciudad.
 * Corregimos un error de sintaxis provocado al intentar renderizar JSON puro dentro del bloque de Mermaid.
+
+## Entrada 006 — División de tareas para el Kanban — Semana 2
+**Herramienta:** Claude 
+**Responsable:** Scrum Master 
+
+**¿Para qué se usó?**
+Dividir las tareas del TP1 por integrante según rol 
+y semana objetivo.
+
+**¿Qué generó la IA?**
+Tabla de 8 tareas asignadas a cada rol con semana objetivo.
+
+**¿Qué modificamos y por qué?**
+- Ajustamos las semanas según el calendario real del 
+  cuatrimestre.
+- Reasignamos la tarea de AI_LOG al QA Lead por ser 
+  quien tiene mayor control del proceso de calidad.
