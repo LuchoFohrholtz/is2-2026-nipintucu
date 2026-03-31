@@ -46,4 +46,35 @@ Instrucciones paso a paso para agregar colaboradores, ubicar la opción correcta
 **¿Qué modificamos y por qué?**  
 - No fue necesario modificar contenido técnico, solo adaptar los pasos según la interfaz real que veía el equipo.  
 - Se aplicaron los pasos al repositorio concreto del proyecto.  
-- Se validó que los miembros puedan editar y participar del tablero.  
+- Se validó que los miembros puedan editar y participar del tablero.
+
+Entrada 004 — Estrategias de la Matriz de Riesgos — Semana 2
+
+**Herramienta:** ChatGPT
+**Responsable:** Scrum Master / Dev Lead
+**¿Para qué se usó?**
+Definir estrategias de mitigación preventivas y planes de contingencia reactivos para los 5 riesgos identificados en el borrador del proyecto (Ferretería).
+
+**¿Qué generó la IA?**
+Un texto detallado con acciones específicas para cada riesgo, abarcando desde la configuración técnica de la base de datos hasta políticas de commits por problemas de conectividad en la zona.
+
+**¿Qué modificamos y por qué?**
+* Ajustamos el vocabulario técnico sugerido por la IA para que coincida con las herramientas reales que usaremos (ej. especificando PostgreSQL/Supabase en lugar de soluciones genéricas).
+* Resumimos las políticas de contingencia de equipo para alinearlas con nuestro Contrato de Proyecto y horarios reales de cursada.
+
+---
+
+Entrada 005 — Generación de Código Mermaid para Diagrama de Clases — Semana 2
+
+**Herramienta:** ChatGPT
+**Responsable:** Dev Lead
+**¿Para qué se usó?**
+Traducir el borrador de entidades lógicas del sistema de inventario (Producto, MovimientoStock, Cliente, Empleado) a sintaxis de código Mermaid para integrarlo visualmente en la documentación.
+
+**¿Qué generó la IA?**
+Un bloque de código `classDiagram` y `flowchart LR` con las instancias de objetos, atributos mockeados (ej. Amoladora Caterpillar) y las relaciones de cardinalidad.
+
+**¿Qué modificamos y por qué?**
+* Refinamos el diagrama inicial propuesto por la IA (que era un diagrama de clases completo) a un `flowchart LR` más simple para cumplir estrictamente con el nivel de detalle requerido en la protoclase 1.
+* Modificamos la entidad genérica "Usuario" sugerida por la IA, separándola en "Empleado" y "Cliente" para reflejar mejor el proceso de venta real en el mostrador. Y luego modificamos los datos colocando ejemplos que sean mas acordes a nuestra ciudad.
+* Corregimos un error de sintaxis provocado al intentar renderizar JSON puro dentro del bloque de Mermaid.
