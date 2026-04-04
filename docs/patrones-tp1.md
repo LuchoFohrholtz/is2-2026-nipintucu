@@ -1,7 +1,7 @@
 # Documentación de Patrones de Diseño — TP1
 
 **Materia:** Ingeniería de Software II · UCP · 2026  
-**Sistema:** Gestión de Stock — Ferretería  
+**Sistema:** Gestión de Stock — Ferretería - nipintucu  
 **Empresa:** UCP Inc.
 
 | Integrante | Rol | GitHub |
@@ -317,8 +317,3 @@ Los dos patrones seleccionados — Observer y Strategy — fueron elegidos porqu
 
 Ambos patrones están integrados en funcionalidades reales del sistema, pueden identificarse claramente en el código, y sientan las bases para las extensiones que se desarrollarán en el TP2 — pruebas automatizadas, nuevas estrategias de reporte, nuevos observadores.
 
-> ⚠️ Todos los integrantes del equipo deben poder responder en el coloquio: **¿Por qué usamos este patrón y no otro?**
-
-
-
-*IS II · UCP Inc. · Documentación de Patrones de Diseño · TP1 · 2026*
