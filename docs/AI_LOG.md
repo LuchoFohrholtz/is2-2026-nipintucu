@@ -144,3 +144,45 @@ Verificamos que el código de la IA consumiera correctamente los atributos y mé
 
 Validamos y aceptamos la decisión de simular la generación de los archivos mediante consola, ya que demuestra la correcta aplicación arquitectónica del patrón sin necesidad de sobrecargar el TP con librerías externas complejas.
 
+## Entrada 009 — Dividisión de las tareas del TP1
+**Herramienta:** Claude (Anthropic)
+**Responsable:** Scrum Master 
+
+**¿Para qué se usó?**
+Dividir las tareas del TP1 en tarjetas para el tablero Kanban,
+asignadas por rol e integrante con eje y semana objetivo.
+
+**¿Qué generó la IA?**
+Tabla de 8 tareas con nombre, eje (1, 2 o 3), semana objetivo
+y responsable asignado según el rol de cada integrante.
+
+**¿Qué modificamos y por qué?**
+- Ajustamos las semanas objetivo al calendario real
+  del cuatrimestre.
+- Corregimos el eje de la tarea del AI_LOG de Eje 2 a Eje 1
+  porque corresponde a proceso y gestión, no a patrones.
+- Reordenamos las tareas por dependencia antes de
+  cargarlas al tablero.
+
+ ## Entrada 010 — Redactacción del archivo docs/patrones-tp1.md
+**Herramienta:** Claude (Anthropic)
+**Responsable:** Scrum Master 
+
+**¿Para qué se usó?**
+Redactar el archivo docs/patrones-tp1.md con la documentación
+completa de los dos patrones implementados para subir al repositorio.
+
+**¿Qué generó la IA?**
+Documento Markdown con estructura para Observer y Strategy:
+nombre, intención GoF, problema identificado en el sistema,
+justificación de la elección, estructura del patrón, implementación
+en código Python y mejoras que aporta al sistema.
+
+**¿Qué modificamos y por qué?**
+- Reemplazamos las citas textuales de GoF por paráfrasis propias
+  para que el documento refleje la comprensión del equipo.
+- Ajustamos los ejemplos de código para que coincidan exactamente
+  con las clases implementadas en src/models.py.
+- Agregamos la sección de alternativas descartadas porque
+  la rúbrica del coloquio evalúa específicamente ese punto
+  (Dimensión 3 — justificación de decisiones de diseño). 
