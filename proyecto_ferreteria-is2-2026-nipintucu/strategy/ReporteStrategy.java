@@ -4,5 +4,5 @@ import modelo.Producto;
 import java.util.List;
 
 public interface ReporteStrategy {
-    void generarReporte(List<Producto> productos);
+    void generar(List<Producto> productos);
 }

@@ -1,16 +1,14 @@
 import modelo.*;
 import observer.AlertaConsolaObserver;
 import servicio.InventarioServicio;
-import strategy.GeneradorReportes;
-import strategy.ReporteExcel;
-import strategy.ReportePDF;
+import strategy.*;
 
 import java.util.List;
 import java.util.Scanner;
 
 /**
  * Punto de entrada de la aplicación.
- * Menú de consola para probar el sistema completo.
+ * Menú de consola para probar el sistema completo con patrones Observer y Strategy.
  */
 public class Main {
 
@@ -20,10 +18,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // --- Datos de ejemplo (equivale a lo que mostraron los diagramas) ---
+        // --- Datos de ejemplo ---
         configurarDatosIniciales();
 
-        // --- Registrar observador de consola (en la UI esto sería un observer gráfico) ---
+        // --- Registrar observador de consola (Patrón Observer) ---
         servicio.agregarObservadorGlobal(new AlertaConsolaObserver());
 
         System.out.println("=== SISTEMA DE INVENTARIO - FERRETERÍA ===");
@@ -60,12 +58,39 @@ public class Main {
         System.out.println("3. Listar productos");
         System.out.println("4. Ver productos con stock bajo");
         System.out.println("5. Ver historial de movimientos");
-        System.out.println("6. Exportar reporte de inventario");
+        System.out.println("6. Generar reporte de inventario (Strategy)");
         System.out.println("0. Salir");
     }
 
     // =========================================================
-    // CASOS DE USO DESDE CONSOLA
+    // IMPLEMENTACIÓN DEL PATRÓN STRATEGY
+    // =========================================================
+
+    private static void exportarReportes() {
+        System.out.println("\n-- Generar Reporte de Inventario --");
+        System.out.println("1. Reporte de Stock Actual");
+        System.out.println("2. Reporte de Reposición (Solo faltantes)");
+        int opcion = leerEntero("Seleccione opción: ");
+
+        // Uso de la clase de contexto según el informe
+        GeneradorDeReportes generador = new GeneradorDeReportes();
+        List<Producto> inventarioActual = servicio.getProductos();
+
+        if (opcion == 1) {
+            generador.setEstrategia(new ReporteStockActual());
+        } else if (opcion == 2) {
+            generador.setEstrategia(new ReporteReposicion());
+        } else {
+            System.out.println("Opción inválida.");
+            return;
+        }
+
+        // Ejecución del método definido en el diagrama de clases
+        generador.ejecutarGeneracion(inventarioActual);
+    }
+
+    // =========================================================
+    // CASOS DE USO EXISTENTES
     // =========================================================
 
     private static void registrarSalidaStock() {
@@ -150,28 +175,6 @@ public class Main {
         }
     }
 
-    private static void exportarReportes() {
-        System.out.println("\n-- Exportar Reporte de Inventario --");
-        System.out.println("1. Formato PDF");
-        System.out.println("2. Formato Excel (CSV)");
-        int formato = leerEntero("Seleccione formato: ");
-
-        GeneradorReportes generador = new GeneradorReportes();
-        List<Producto> inventarioActual = servicio.getProductos();
-
-        if (formato == 1) {
-            generador.setEstrategia(new ReportePDF());
-        } else if (formato == 2) {
-            generador.setEstrategia(new ReporteExcel());
-        } else {
-            System.out.println("Opción inválida.");
-            return;
-        }
-
-        // Se ejecuta la estrategia elegida
-        generador.exportarInventario(inventarioActual);
-    }
-
     // =========================================================
     // HELPERS
     // =========================================================
@@ -194,13 +197,9 @@ public class Main {
             System.out.print("Ingrese un número válido: ");
         }
         int valor = scanner.nextInt();
-        scanner.nextLine(); // limpiar buffer
+        scanner.nextLine();
         return valor;
     }
-
-    // =========================================================
-    // DATOS INICIALES (equivalen a los diagramas de objeto)
-    // =========================================================
 
     private static void configurarDatosIniciales() {
         empleadoActivo = new Empleado("Santiago Gonzalez", "010");
@@ -213,7 +212,7 @@ public class Main {
         Producto amoladora = new Producto(
                 "Amoladora Caterpillar 115mm",
                 85000.00,
-                6,           // stock inicial saludable para empezar
+                6,
                 5,
                 electricas
         );
