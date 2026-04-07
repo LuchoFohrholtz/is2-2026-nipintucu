@@ -1,4 +1,4 @@
-# FerreStock — Project Dump
+# FerreRap — Project Dump
 
 > Documento de contexto del proyecto para el repositorio.  
 > IS2 · UCP · 2026
@@ -7,7 +7,7 @@
 
 ## Descripción general
 
-FerreStock es un sistema web de gestión de inventario para una ferretería mediana. Permite registrar productos, controlar entradas y salidas de stock, alertar ante stock bajo y generar órdenes de reposición automáticas.
+FerreRap es un sistema web de gestión de inventario para una ferretería mediana. Permite registrar productos, controlar entradas y salidas de stock, alertar ante stock bajo y generar órdenes de reposición automáticas.
 
 **Stack tecnológico:**
 - Backend: Python 3.11 + Flask + Flask-CORS
@@ -20,7 +20,7 @@ FerreStock es un sistema web de gestión de inventario para una ferretería medi
 ## Estructura del proyecto
 
 ```
-ferrestock/
+ferrerap/
 ├── app.py                  # API REST (Flask) — rutas y controladores
 ├── index.html              # Frontend SPA — interfaz del usuario
 ├── requirements.txt        # Dependencias Python
@@ -220,4 +220,4 @@ Al iniciar, el sistema carga 8 productos de ejemplo:
 
 ---
 
-*Generado el 07/04/2026 — FerreStock IS2 · UCP · 2026*
+*Generado el 07/04/2026 — FerreRap IS2 · UCP · 2026*
