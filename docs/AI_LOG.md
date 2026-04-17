@@ -221,3 +221,28 @@ Rediseñar la pantalla de login con una estética neon/graffiti urbana, migrar e
 **Uso crítico de la IA:**  
 La IA propuso inicialmente usar la librería oficial `supabase-py` para la integración. El equipo detectó que esto arrastraba dependencias innecesarias (`pyiceberg`, `storage3`) que rompían el entorno en Windows. Se discutió la alternativa y se decidió implementar `SupabaseDB` directamente sobre `postgrest` + `httpx`, lo que demostró comprensión del protocolo REST de Supabase en lugar de depender de una abstracción opaca.
 
+## Entrada 012 — Análisis de estándares HCI y sistemas críticos — Semana actual
+
+**Herramienta:** Claude (Anthropic)
+**Responsable:** Scrum Master 
+
+**¿Para qué se usó?**
+Redactar el archivo docs/ANALISIS_ESTANDARES.md con la investigación
+y análisis aplicado de los 5 estándares solicitados por la cátedra
+(ISO 9241-11, ISO 13407, ISO/IEC 27001, ISA/IEC 62443, ISO 9001).
+
+**¿Qué generó la IA?**
+Documento Markdown con tabla comparativa de los 5 estándares,
+análisis aplicado al sistema FerreRAP respondiendo las 3 preguntas de
+la consigna, conclusión sobre certificación, y tabla de relación entre
+las decisiones de diseño del TP1 (Observer, Strategy, login, Supabase)
+y los estándares evaluados.
+
+**¿Qué modificamos y por qué?**
+- Verificamos que la justificación de cada estándar coincida con las
+  características reales del sistema (Supabase, carrito, facturación).
+- Confirmamos que la mención de gaps reales (credenciales hardcodeadas,
+  falta de RLS en Supabase) refleja el estado actual del código y no
+  sea solo teoría genérica.
+- Validamos que la conclusión conecte explícitamente con los patrones
+  Observer y Strategy implementados en el TP1.
