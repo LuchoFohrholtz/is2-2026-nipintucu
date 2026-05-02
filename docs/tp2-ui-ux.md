@@ -54,28 +54,136 @@ Una restricción real que encontramos al diseñar es que el empleado de mostrado
 
 ## A3 — Auditoría de usabilidad ISO 9241-11
 
-> 🔄 *En progreso — Scrum Master + UX Lead*
+La norma ISO 9241-11 define usabilidad como el grado en que un sistema
+puede ser usado por usuarios específicos para alcanzar objetivos
+específicos con eficacia, eficiencia y satisfacción, en un contexto
+de uso determinado. Para esta auditoría evaluamos dos de esos tres
+criterios sobre el prototipo actual de FerreRAP.
 
-*(Se completará cuando el prototipo de Figma esté disponible para evaluar)*
+---
 
 ### Criterio 1 — Eficacia
 
-**Métrica:** Porcentaje de tareas completadas sin errores en el primer intento.  
-**Tarea evaluada:** Registrar una salida de stock desde el módulo de movimientos.  
-**Simulación:** *(pendiente — se evaluará sobre el prototipo Figma)*  
-**Mejora propuesta:** *(pendiente)*
+**Definición:** Grado en que el usuario logra completar la tarea
+correctamente, sin errores ni pasos incorrectos.
+
+**Métrica definida:** Porcentaje de tareas completadas en el primer
+intento sin cometer errores de navegación ni de carga de datos.
+
+**Tarea evaluada:** Registrar un producto nuevo en el sistema
+(flujo: Pantalla 1 → Pantalla 2 → Pantalla 3).
+
+**Simulación sobre el prototipo:**
+
+Al recorrer el flujo en Figma, el camino es claro: desde el
+inventario hay un botón visible "+ Nuevo producto" en la esquina
+superior derecha (Pantalla 1). Al hacer clic lleva directamente
+al formulario (Pantalla 2), donde todos los campos obligatorios
+están marcados con asterisco (*). Al guardar, el sistema vuelve
+al inventario y muestra una notificación verde de confirmación
+con el mensaje "Producto creado correctamente" y el nombre del
+producto agregado (Pantalla 3). El contador de productos también
+se actualiza de 8 a 10 en tiempo real.
+
+**Resultado de la evaluación:** El flujo cumple con eficacia.
+El usuario puede completar la tarea sin ambigüedades porque
+cada pantalla tiene un único camino posible hacia adelante.
+
+**Problema identificado:** El botón "Guardar producto" aparece
+deshabilitado visualmente (color gris) cuando el formulario
+está vacío, pero el prototipo no indica al usuario qué campos
+faltan completar para habilitarlo. Un usuario nuevo podría no
+entender por qué el botón no responde.
+
+**Mejora concreta:** Agregar un mensaje debajo del botón que
+indique los campos obligatorios pendientes cuando el usuario
+intenta guardar sin completar el formulario. Por ejemplo:
+"Completá nombre, categoría y stock para continuar."
+
+---
 
 ### Criterio 2 — Eficiencia
 
-**Métrica:** Cantidad de pasos necesarios para completar la tarea principal.  
-**Tarea evaluada:** Registrar una venta desde que el usuario abre el sistema hasta que el stock queda actualizado.  
-**Simulación:** *(pendiente — se evaluará sobre el prototipo Figma)*  
-**Mejora propuesta:** *(pendiente)*
+**Definición:** Recursos utilizados en relación con la precisión
+con que se logra el objetivo. En interfaces, se mide típicamente
+por la cantidad de pasos o tiempo necesario para completar la tarea.
+
+**Métrica definida:** Cantidad de clics y campos necesarios para
+completar el caso de uso principal desde la pantalla inicial.
+
+**Tarea evaluada:** Agregar un producto nuevo al inventario.
+
+**Simulación sobre el prototipo:**
+
+Contando los pasos sobre el prototipo de Figma:
+
+| Paso | Acción | Tipo |
+|------|--------|------|
+| 1 | Clic en "+ Nuevo producto" | 1 clic |
+| 2 | Completar campo Nombre | 1 campo |
+| 3 | Completar campo Descripción | 1 campo (opcional) |
+| 4 | Seleccionar Categoría | 1 campo |
+| 5 | Completar Precio | 1 campo |
+| 6 | Completar Stock actual | 1 campo |
+| 7 | Completar Stock mínimo | 1 campo |
+| 8 | Clic en "Guardar producto" | 1 clic |
+
+**Total:** 2 clics + 5 campos obligatorios + 1 opcional.
+El flujo es eficiente para la tarea que realiza.
+
+**Resultado de la evaluación:** El flujo es eficiente.
+No hay pantallas intermedias innecesarias ni confirmaciones
+redundantes. El usuario completa la tarea en una sola pantalla
+de formulario.
+
+**Problema identificado:** El campo "Descripción" está ubicado
+antes de Categoría y Precio, pero es el único campo opcional.
+Visualmente rompe el orden esperado (datos principales primero,
+datos secundarios después), lo que puede llevar al usuario a
+completar un campo que no es obligatorio antes de los que sí lo son.
+
+**Mejora concreta:** Reordenar el formulario colocando Descripción
+al final, después de todos los campos obligatorios. Así el usuario
+sigue un flujo lógico de arriba hacia abajo completando primero
+lo necesario.
+
+---
 
 ### Alineación con ISO 13407
 
-*(Se completará junto con el análisis de los criterios anteriores)*
+ISO 13407 (actualmente reemplazada por ISO 9241-210) define un
+proceso de diseño centrado en el humano compuesto por 4 pasos
+iterativos que se repiten hasta que el sistema sea aceptable
+para sus usuarios.
 
----
+El desarrollo de FerreRAP siguió este proceso de forma implícita
+a lo largo del cuatrimestre:
+
+**Paso 1 — Entender y especificar el contexto de uso:**
+Realizado en el Sprint 0, cuando se definieron los actores
+del sistema (empleado de mostrador y encargado de compras),
+sus tareas principales y el entorno de trabajo (mostrador
+de ferretería, bajo presión, múltiples distracciones).
+
+**Paso 2 — Especificar los requisitos del usuario:**
+Realizado durante el TP1, al definir las funcionalidades
+mínimas del sistema: registrar entradas y salidas, generar
+alertas automáticas, y producir reportes de reposición.
+
+**Paso 3 — Producir soluciones de diseño:**
+El prototipo de Figma representa esta etapa. Las tres
+pantallas diseñadas por el UX Lead responden directamente
+a los requisitos identificados en los pasos anteriores.
+
+**Paso 4 — Evaluar el diseño contra los requisitos:**
+Esta auditoría ISO 9241-11 es exactamente este paso.
+Al evaluar eficacia y eficiencia sobre el prototipo,
+identificamos dos problemas concretos y propusimos mejoras
+que deberían incorporarse en la próxima iteración del diseño.
+
+El ciclo no termina acá — las mejoras propuestas en esta
+auditoría alimentan una nueva iteración del prototipo, que
+luego volvería a evaluarse. Eso es exactamente lo que
+ISO 13407 plantea como proceso.
 
 *IS II · UCP Inc. · FerreRAP · 2026*
