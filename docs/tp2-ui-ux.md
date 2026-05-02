@@ -16,16 +16,17 @@
 
 ## A1 — Prototipo en Figma
 
-> 🔄 *En progreso — UX Lead (Mariano Acosta)*
-
-**Link al prototipo:** *(pendiente — se actualizará cuando el prototipo esté publicado)*
+(https://www.figma.com/make/CicSoOUwMEUprpSG9INYkZ/FerreRAP-Stock-Management-Prototype?t=ufxEOo6hIVvvNYoi-1)
 
 **Pantallas incluidas:**
 1. Listado de productos con buscador y estados de stock
 2. Alta de producto nuevo (formulario completo)
 3. Confirmación de stock actualizado con feedback visual
 
-**Capturas:** *(se agregarán cuando el prototipo esté completo)*
+**Capturas:** 
+<img width="1320" height="878" alt="image" src="https://github.com/user-attachments/assets/922959d8-6f70-4b5a-ab0d-a1cdf05d0561" />
+<img width="1325" height="871" alt="image" src="https://github.com/user-attachments/assets/557d614b-df74-41a3-af4e-7124a088d188" />
+<img width="1310" height="869" alt="image" src="https://github.com/user-attachments/assets/92e6016b-0b7c-48c0-822e-772aff5f0a83" />
 
 ---
 
