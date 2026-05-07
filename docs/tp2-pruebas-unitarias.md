@@ -215,6 +215,49 @@ def test_TC06_entrada_normaliza_stock_cierra_ordenes():
 
 ---
 
+## B2 — Framework de pruebas y automatización CI/CD
+
+### Framework elegido: pytest
+
+Se eligió **pytest** como framework de pruebas unitarias por las siguientes razones:
+
+- **Compatibilidad con el stack:** el proyecto está desarrollado en Python 3.12, y pytest es el framework de pruebas más utilizado y mantenido del ecosistema Python.
+- **Sintaxis simple:** no requiere clases ni boilerplate. Cada test es una función simple que comienza con `test_`, lo que facilita la lectura y el mantenimiento.
+- **Aserciones nativas:** usa el `assert` estándar de Python con introspección automática, mostrando el detalle del valor real vs el esperado cuando un test falla.
+- **Integración directa con GitHub Actions:** existen acciones oficiales y comunidad amplia que documentan workflows con pytest, lo que simplifica la configuración del pipeline CI/CD.
+- **Sin dependencias adicionales:** se instala con `pip install pytest` y no requiere configuración previa para empezar a escribir tests.
+
+### Pipeline CI/CD configurado
+
+Se configuró un pipeline en **GitHub Actions** mediante el archivo `.github/workflows/test.yml`. El workflow se ejecuta automáticamente en cada `push` y `pull request` hacia la rama principal, mostrando los resultados en la pestaña **Actions** del repositorio.
+
+El pipeline realiza los siguientes pasos:
+
+1. Hace checkout del código del repositorio.
+2. Configura Python 3.12 en el entorno.
+3. Instala las dependencias necesarias (`pytest`, dependencias de `requirements.txt`).
+4. Ejecuta los 6 casos de prueba unitaria con `pytest tests/unit/ -v`.
+5. Reporta el resultado final (verde si pasan todos, rojo si alguno falla).
+
+### Evidencia de ejecución exitosa
+
+**Captura 1 — Workflow ejecutado correctamente (Success):**
+
+<img width="739" height="353" alt="1" src="https://github.com/user-attachments/assets/1acd4863-b902-48f6-9fb3-959a5e1d927f" />
+
+
+**Captura 2 — Detalle del job con todos los pasos aprobados:**
+
+<img width="430" height="412" alt="2" src="https://github.com/user-attachments/assets/bee207d7-9f5c-49de-87b5-ad609f13de65" />
+
+### Video de evidencia
+
+Se grabó un video corto mostrando los tests ejecutándose localmente y pasando en verde.
+
+🎥 **Link al video (YouTube — no listado):** https://youtu.be/z-QnhYLdQRQ
+
+---
+
 ## B3 — Diseño conceptual de pruebas de integración
 
 > **Aclaración:** Esta sección es un diseño conceptual. Las pruebas de integración no se implementan en el TP2 sino que se planifican para etapas futuras del proyecto.
