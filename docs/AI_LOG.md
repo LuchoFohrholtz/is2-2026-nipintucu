@@ -288,3 +288,49 @@ algunas secciones iniciales. Todas las decisiones técnicas, los casos
 de prueba, la auditoría del prototipo y la elección de herramientas
 las tomó el equipo en base al código real del proyecto. Cada
 integrante puede defender su parte en el coloquio individual.
+
+## Entrada 014 — Framework de pruebas y automatización CI/CD — Semana de TP2
+Herramienta: ChatGPT / Claude
+Responsable: Dev Lead
+
+¿Para qué se usó?
+Apoyo para configurar el framework de pruebas automatizadas del proyecto y dejar funcionando la ejecución de tests dentro del pipeline de integración continua con GitHub Actions.
+
+La IA se utilizó como asistencia para definir una configuración inicial simple y adecuada al alcance del TP2, usando pytest como framework gratuito de pruebas para Python, y para orientar la creación del archivo .github/workflows/test.yml, encargado de ejecutar los tests automáticamente en cada push al repositorio.
+
+¿Qué generó la IA?
+
+Una propuesta de configuración para GitHub Actions usando Python y pytest.
+Una estructura base para el archivo .github/workflows/test.yml.
+Recomendaciones para instalar dependencias antes de ejecutar los tests.
+Sugerencias para interpretar los errores del workflow cuando el pipeline fallaba con exit code 2.
+Orientación para corregir la ejecución hasta lograr que el workflow finalizara correctamente.
+¿Qué modificamos y por qué?
+
+Adaptamos el archivo test.yml al repositorio real del proyecto, usando los nombres de pasos correspondientes:
+Clonar repositorio
+Configurar Python
+Instalar dependencias
+Ejecutar tests
+Ajustamos la instalación de dependencias para que el entorno de GitHub Actions pudiera ejecutar correctamente los tests.
+Revisamos los fallos iniciales del pipeline, donde GitHub Actions marcaba Failure y mostraba Process completed with exit code 2.
+Corregimos la configuración hasta que el workflow ejecutó correctamente y mostró estado Success.
+Verificamos en la consola de GitHub Actions que todos los pasos del job finalizaran correctamente, especialmente la etapa Ejecutar tests.
+Evidencia generada:
+Se obtuvieron capturas del workflow en GitHub Actions mostrando:
+
+Primeras ejecuciones fallidas del pipeline.
+Error de ejecución con exit code 2.
+Re-ejecución del workflow luego de corregir la configuración.
+Ejecución final exitosa con estado Success.
+Detalle del job test con todos los pasos completados correctamente:
+Set up job
+Clonar repositorio
+Configurar Python
+Instalar dependencias
+Ejecutar tests
+Complete job
+Uso crítico de la IA:
+La IA se usó como apoyo técnico para acelerar la configuración del pipeline y entender los errores iniciales de GitHub Actions. La elección final de pytest, la adaptación del archivo .github/workflows/test.yml al repositorio real y la validación del workflow fueron realizadas por el equipo.
+
+Como Dev Lead, revisé que la automatización cumpliera con la consigna B2: ejecutar los tests en cada push, mostrar el resultado en la consola y dejar evidencia del workflow funcionando correctamente en GitHub Actions.
