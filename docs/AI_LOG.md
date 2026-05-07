@@ -246,3 +246,59 @@ y los estándares evaluados.
   sea solo teoría genérica.
 - Validamos que la conclusión conecte explícitamente con los patrones
   Observer y Strategy implementados en el TP1.
+
+## Entrada 013 — Documentación TP2: Pruebas Automatizadas y UI/UX — Semana de TP2
+
+**Herramienta:** Claude (Anthropic)
+**Responsable:** Scrum Master + QA Lead
+
+**¿Para qué se usó?**
+Redactar los archivos de documentación del Trabajo Práctico N°2:
+docs/tp2-ui-ux.md (Parte A — Diseño de Interfaz Centrado en el Usuario)
+y docs/tp2-pruebas-unitarias.md (Parte B — Pruebas de Software).
+Adicionalmente, ayuda en la planificación general del TP2 (división
+de tareas por integrante y tarjetas para el tablero Kanban).
+
+**¿Qué generó la IA?**
+
+| Sección | Contenido generado |
+|---|---|
+| tp2-ui-ux.md — A2 | Análisis de usuarios objetivo (empleado de mostrador y encargado de compras), tareas principales del sistema y contexto de uso en una ferretería. |
+| tp2-ui-ux.md — A3 | Auditoría de usabilidad ISO 9241-11 con dos criterios (eficacia y eficiencia), métricas definidas, simulación sobre el prototipo Figma de Mariano, problemas identificados y mejoras concretas. Sección de alineación con los 4 pasos de ISO 13407. |
+| tp2-pruebas-unitarias.md — B0 | Investigación previa sobre clases de equivalencia y valores límite, con ejemplos aplicados a la función `registrar_salida()` de la clase Producto. |
+| tp2-pruebas-unitarias.md — B1 | Documentación de los 6 casos de prueba unitaria (TC01 a TC06), incluyendo método bajo prueba, técnica aplicada, datos de entrada, resultado esperado y código de cada test. |
+| tp2-pruebas-unitarias.md — B2 | Justificación de pytest como framework elegido y descripción del pipeline CI/CD configurado en GitHub Actions. |
+| tp2-pruebas-unitarias.md — B3 | Diseño conceptual de pruebas de integración con identificación de dependencias externas (Flask, generación de PDF/Excel), estrategia de mocks con pseudocódigo y recomendación de unittest.mock como herramienta. |
+| Planificación TP2 | Documento Word con división de tareas por rol, tarjetas para el Kanban con etiquetas por eje, y guía de ejecución semana por semana respetando dependencias. |
+
+**¿Qué modificamos y por qué?**
+- En el A2 (análisis de usuario), validamos que la descripción de los
+  empleados y encargados refleje el escenario real de la ferretería
+  según el contexto definido en el Sprint 0, no perfiles genéricos.
+- En el A3 (auditoría ISO), reescribimos los problemas detectados
+  para que se basen en lo que efectivamente se ve en el prototipo
+  de Figma generado por Mariano (botón gris sin indicación de campos
+  faltantes, orden ilógico de campos opcionales) y no en problemas
+  inventados.
+- En el B0 (investigación), confirmamos que los ejemplos de las
+  técnicas estuvieran aplicados a métodos reales de models.py
+  y no a funciones genéricas.
+- En el B1 (casos de prueba), ajustamos los nombres de las clases
+  y los mensajes exactos de las excepciones para que coincidan
+  con la implementación real del código.
+- En el B3 (diseño de integración), descartamos la propuesta inicial
+  de mockear Supabase porque la lógica de persistencia ya está
+  delegada al cliente postgrest, y nos enfocamos en las dos
+  dependencias reales del backend (Flask y la generación de archivos).
+- En la planificación, ajustamos las semanas objetivo al calendario
+  real del cuatrimestre y reasignamos algunas tareas según la
+  disponibilidad de cada integrante.
+
+**Uso crítico de la IA:**
+La IA fue utilizada como asistente de redacción y estructuración,
+pero todas las decisiones técnicas (qué patrones usar, qué casos
+de prueba diseñar, qué herramientas elegir) fueron tomadas por
+el equipo. El código de los tests fue escrito y verificado por
+el Dev Lead y el QA Lead antes de incluirlo en el repositorio.
+Los integrantes pueden defender cada caso de prueba y cada decisión
+de diseño en el coloquio individual sin depender del texto generado.
