@@ -186,4 +186,4 @@ auditoría alimentan una nueva iteración del prototipo, que
 luego volvería a evaluarse. Eso es exactamente lo que
 ISO 13407 plantea como proceso.
 
-*IS II · UCP Inc. · FerreRAP · 2026*
+*IS II · nipintucu · FerreRAP · 2026*
