@@ -5,7 +5,7 @@
 
 La verificación es comprobar que estamos construyendo el sistema *correctamente*, y la validación es comprobar que estamos construyendo *el sistema correcto*.
 
-**Verificación en nuestro proyecto:**revisar que `registrar_salida()` en `models.py` descuenta el stock y llama a `_notificar()` cuando `stock_actual < stock_minimo`, siguiendo el diseño del patrón Observer definido en el TP1.  
+**Verificación en nuestro proyecto:** revisar que `registrar_salida()` en `models.py` descuenta el stock y llama a `_notificar()` cuando `stock_actual < stock_minimo`, siguiendo el diseño del patrón Observer definido en el TP1.  
 **Validación en nuestro proyecto:** que un empleado real de ferretería pruebe el sistema y confirme que las alertas de stock le resultan útiles en su trabajo diario.
 
 ---
