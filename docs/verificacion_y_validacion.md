@@ -48,3 +48,57 @@ No se usan siempre porque son muy costosos en tiempo y requieren conocimiento es
 En la *Sprint Review*, el Product Owner valida que lo entregado cumple con los criterios de aceptación que él mismo definió al inicio del sprint. No es solo "ver si funciona", sino decidir si eso es lo que realmente se necesitaba.
 
 Se relaciona con las pruebas automáticas porque éstas le dan confianza de que el sistema no rompió lo que ya funcionaba. En nuestro sistema, si el pipeline de GitHub Actions muestra todos los tests en verde, el PO puede enfocarse en validar la funcionalidad nueva sin preocuparse por regresiones.
+
+
+## Mini Plan de V&V — FerreRAP
+
+### Sección 1: Verificación vs Validación
+
+1. **Verificación que ya hacemos:** ejecutamos pruebas unitarias con pytest sobre `registrar_salida()` verificando que el Observer se dispara correctamente cuando el stock cae por debajo del mínimo.
+
+2. **Validación que planeamos hacer con el Product Owner:** mostrarle el flujo completo de alerta y reposición automática en el prototipo Figma para confirmar que la información que ve el empleado en pantalla es suficiente para tomar decisiones de compra sin necesitar consultar otro sistema.
+
+---
+
+### Sección 2: Planificación de V&V
+
+| Sprint  | Actividad de V&V                         | Técnica                | Responsable | Herramienta |
+|---------|------------------------------------------|------------------------|-------------|-------------|
+| Actual  | Pruebas unitarias sobre `registrar_salida` | Clases de equivalencia | QA Lead     | pytest      |
+| Próximo | Inspección de `models.py` y `app.py`    | Análisis estático      | Dev Lead    | Pylint      |
+
+---
+
+### Sección 3: Inspección y análisis estático
+
+**a)** Inspeccionaríamos primero `models.py`, porque concentra toda la lógica de dominio: el patrón Observer (`Producto`, `Alerta`, `OrdenReposicion`) y el patrón Strategy (`GeneradorReporte`). Si hay un error de diseño ahí, impacta en todo el sistema.
+
+**b)** Herramienta: **Pylint**. La primera regla que aplicaríamos es la detección de bloques `except` vacíos o demasiado amplios (`except Exception` sin manejo real), que tenemos en algunos endpoints de `app.py` al parsear los datos del request.
+
+---
+
+### Sección 4: Método formal conceptual
+
+**a)** Invariante de la clase `Producto`:
+
+> "El `stock_actual` nunca puede ser negativo. Si se intenta registrar una salida mayor al stock disponible, el sistema debe lanzar un error antes de modificar cualquier valor."
+
+**b)** Prueba unitaria que verifica esa propiedad:
+
+```python
+def test_stock_nunca_queda_negativo():
+    p = Producto("Martillo", "desc", 1500, 3, 2, "Herramientas")
+    with pytest.raises(ValueError):
+        p.registrar_salida(5, "venta")
+    assert p.stock_actual == 3  # el stock no se modificó
+```
+
+---
+
+### Sección 5: Reunión de validación (simulación)
+
+Dos preguntas que le haríamos al Product Owner en la próxima Sprint Review:
+
+1. Cuando el sistema genera una orden de reposición automática, ¿la cantidad sugerida (`stock_minimo x 2`) refleja lo que realmente pedirías a un proveedor, o preferirías poder configurarla por producto?
+
+2. ¿Con ver la alerta en pantalla te alcanza para actuar, o necesitás que el sistema avise también por otro canal, como un mail o un mensaje?
