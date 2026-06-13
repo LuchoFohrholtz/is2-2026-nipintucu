@@ -3,7 +3,8 @@ FerreRAP — API Flask + Supabase
 IS2 · UCP · 2026
 """
 
-import io
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 from datetime import datetime
 
 from flask import Flask, jsonify, request, send_from_directory, send_file
@@ -119,13 +120,11 @@ def login():
 
 @app.route("/")
 def index():
-    return send_from_directory(".", "index.html")
+    return send_from_directory(BASE_DIR, "index.html")
 
 @app.route("/logo.png")
 def logo():
-    return send_from_directory(".", "logo.png")
-
-
+    return send_from_directory(BASE_DIR, "logo.png")
 # ════════════════════════════════════════════════════════════
 #  PRODUCTOS
 # ════════════════════════════════════════════════════════════
