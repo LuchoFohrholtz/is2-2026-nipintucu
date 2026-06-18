@@ -19,7 +19,7 @@ from flask_cors import CORS
 
 from database import supabase, MARGEN_GANANCIA
 from models import (
-    Alerta, OrdenReposicion,
+    Alerta, OrdenReposicion, NotificadorEmail,
     GeneradorReporte, ReporteReposicion, ReporteStockActual,
     ReporteRotacion,
 )
@@ -52,7 +52,8 @@ USUARIOS = {
 # ── Patron Observer: instanciar observadores con conexion a DB ──
 alerta_obs = Alerta(supabase)
 orden_obs  = OrdenReposicion(supabase)
-observadores = [alerta_obs, orden_obs]
+email_obs  = NotificadorEmail(supabase)
+observadores = [alerta_obs, orden_obs, email_obs]
 
 
 def notificar_bajo_stock(producto):
@@ -139,7 +140,7 @@ def logo():
 
 @app.route("/api/productos", methods=["GET"])
 def get_productos():
-    result = supabase.table("productos").select("*").order("id").execute()
+    result = supabase.table("productos").select("*").eq("activo", True).order("id").execute()
     for p in result.data:
         p["bajo_stock"] = p["stock_actual"] < p["stock_minimo"]
         p["precio_costo"] = float(p["precio_costo"])
@@ -227,6 +228,17 @@ def editar_producto(pid):
     p["precio_costo"] = float(p["precio_costo"])
     p["precio_venta"] = float(p["precio_venta"])
     return jsonify(p), 200
+
+
+@app.route("/api/productos/<int:pid>", methods=["DELETE"])
+def dar_baja_producto(pid):
+    """Baja LOGICA del producto: marca activo=false en vez de borrarlo,
+    para conservar la integridad de las ventas que lo referencian."""
+    existe = supabase.table("productos").select("id").eq("id", pid).execute()
+    if not existe.data:
+        return jsonify({"error": "Producto no encontrado."}), 404
+    supabase.table("productos").update({"activo": False}).eq("id", pid).execute()
+    return jsonify({"ok": True})
 
 
 # ════════════════════════════════════════════════════════════
@@ -430,6 +442,59 @@ def get_venta(venta_id):
     return jsonify(venta)
 
 
+@app.route("/api/ventas", methods=["GET"])
+def listar_ventas():
+    """Lista las ventas mas recientes (para el historial con opcion de anular)."""
+    result = supabase.table("ventas").select("*").order("id", desc=True).limit(30).execute()
+    for v in result.data:
+        v["total"] = float(v["total"])
+    return jsonify(result.data)
+
+
+@app.route("/api/ventas/<int:venta_id>/anular", methods=["POST"])
+def anular_venta(venta_id):
+    """
+    Anula una venta (Nielsen H3 - control y libertad del usuario).
+    Hace lo inverso de la venta: devuelve el stock de cada item,
+    registra movimientos de entrada por la anulacion y marca anulada=true.
+    """
+    # Buscar la venta
+    venta_res = supabase.table("ventas").select("*").eq("id", venta_id).execute()
+    if not venta_res.data:
+        return jsonify({"error": "Venta no encontrada."}), 404
+    venta = venta_res.data[0]
+
+    # No permitir anular dos veces
+    if venta.get("anulada"):
+        return jsonify({"error": "Esta venta ya fue anulada."}), 400
+
+    # Recorrer los items de la venta y devolver el stock
+    items = supabase.table("venta_items").select("*").eq("venta_id", venta_id).execute().data or []
+    for item in items:
+        pid = item["producto_id"]
+        cant = int(item["cantidad"])
+        prod_res = supabase.table("productos").select("*").eq("id", pid).execute()
+        if not prod_res.data:
+            continue  # el producto pudo haber sido dado de baja; se omite
+        producto = prod_res.data[0]
+        nuevo_stock = producto["stock_actual"] + cant
+        supabase.table("productos").update({"stock_actual": nuevo_stock}).eq("id", pid).execute()
+        # Registrar movimiento de entrada por la anulacion (deja traza)
+        supabase.table("movimientos").insert({
+            "producto_id":     pid,
+            "producto_nombre": producto["nombre"],
+            "cantidad":        cant,
+            "tipo":            "entrada",
+            "motivo":          f"Anulacion venta #{venta_id}",
+            "precio_unitario": float(item["precio_unitario"]),
+            "total":           round(float(item["precio_unitario"]) * cant, 2),
+        }).execute()
+
+    # Marcar la venta como anulada
+    supabase.table("ventas").update({"anulada": True}).eq("id", venta_id).execute()
+
+    return jsonify({"ok": True, "venta_id": venta_id, "items_devueltos": len(items)})
+
 # ════════════════════════════════════════════════════════════
 #  ALERTAS
 # ════════════════════════════════════════════════════════════
@@ -437,6 +502,13 @@ def get_venta(venta_id):
 @app.route("/api/alertas", methods=["GET"])
 def get_alertas():
     result = supabase.table("alertas").select("*").order("created_at", desc=True).limit(50).execute()
+    return jsonify(result.data)
+
+
+@app.route("/api/notificaciones", methods=["GET"])
+def get_notificaciones():
+    """Lista los 'emails' simulados que el observador NotificadorEmail registró."""
+    result = supabase.table("notificaciones").select("*").order("created_at", desc=True).limit(50).execute()
     return jsonify(result.data)
 
 @app.route("/api/alertas/no-leidas", methods=["GET"])

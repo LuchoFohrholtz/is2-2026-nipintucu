@@ -427,7 +427,8 @@ tbody tr:hover   { background: var(--surface2); }
 ═══════════════════════════════════════════ */
 .grid-2   { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 .grid-3-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; }
-.grid-mov { display: grid; grid-template-columns: 1fr 380px; gap: 1.25rem; }
+.grid-mov { display: block; }
+.grid-mov > div { margin-bottom: 1.25rem; }
 
 /* Mode toggle */
 .mode-toggle {
@@ -960,89 +961,96 @@ input:focus, select:focus {
         <button class="mode-btn" onclick="setModo('entrada', this)" title="Entrada: registra una REPOSICIÓN. Suma unidades al inventario (lo que llega del proveedor).">📥 Entrada (reposición)</button>
       </div>
 
-      <!-- ── MODO VENTA ── -->
+     <!-- ── MODO VENTA ── -->
       <div class="mode-section active" id="modo-venta">
-        <div class="grid-mov">
-          <div>
-            <div class="card">
-              <div class="card-header"><span class="card-title">Agregar al carrito</span></div>
-              <div class="card-body">
-                <div class="form-group">
-                  <label>Producto</label>
-                  <select id="venta-producto" onchange="mostrarInfoProducto('venta')"></select>
-                </div>
-                <div class="prod-info" id="venta-prod-info">
-                  <div class="prod-info-item">
-                    <span class="pi-label">Precio venta</span>
-                    <span class="pi-value" id="venta-precio">—</span>
-                  </div>
-                  <div class="prod-info-item">
-                    <span class="pi-label">Stock disponible</span>
-                    <span class="pi-value" id="venta-stock">—</span>
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group">
-                    <label>Cantidad</label>
-                    <input type="number" id="venta-cantidad" min="1" value="1">
-                  </div>
-                  <div class="form-group">
-                    <label>Precio unitario ($) <small style="color:var(--muted)">(editable)</small></label>
-                    <input type="number" id="venta-precio-unit" min="0" step="0.01">
-                  </div>
-                </div>
-                <button class="btn btn-primary" onclick="agregarAlCarrito()">🛒 Añadir al carrito</button>
+        <div style="max-width:560px;margin:0 auto">
+          <!-- 1. AGREGAR AL CARRITO -->
+          <div class="card">
+            <div class="card-header"><span class="card-title">Agregar al carrito</span></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Producto</label>
+                <select id="venta-producto" onchange="mostrarInfoProducto('venta')"></select>
               </div>
-            </div>
-
-            <!-- Historial -->
-            <div class="card" style="margin-top:1.25rem">
-              <div class="card-header"><span class="card-title">Historial reciente</span></div>
-              <div class="card-body">
-                <div class="feed" id="feed-movimientos">
-                  <div class="empty">Sin movimientos aún</div>
+              <div class="prod-info" id="venta-prod-info">
+                <div class="prod-info-item">
+                  <span class="pi-label">Precio venta</span>
+                  <span class="pi-value" id="venta-precio">—</span>
                 </div>
+                <div class="prod-info-item">
+                  <span class="pi-label">Stock disponible</span>
+                  <span class="pi-value" id="venta-stock">—</span>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Cantidad</label>
+                  <input type="number" id="venta-cantidad" min="1" value="1">
+                </div>
+                <div class="form-group">
+                  <label>Precio unitario ($) <small style="color:var(--muted)">(editable)</small></label>
+                  <input type="number" id="venta-precio-unit" min="0" step="0.01">
+                </div>
+              </div>
+              <button class="btn btn-primary" onclick="agregarAlCarrito()">🛒 Añadir al carrito</button>
+            </div>
+          </div>
+
+          <!-- 2. CARRITO (justo debajo de agregar) -->
+          <div class="cart-panel" style="margin-top:1.25rem">
+            <div class="cart-header">
+              🛒 Carrito de venta
+              <span class="cart-count" id="cart-count">0 items</span>
+            </div>
+            <div class="cart-body" id="cart-body">
+              <div class="cart-empty">El carrito está vacío.<br>Seleccioná productos y hacé click en "Añadir".</div>
+            </div>
+            <div class="cart-footer" id="cart-footer" style="display:none">
+              <div class="pago-section">
+                <div class="pago-label">Método de pago</div>
+                <div class="pago-btns">
+                  <button class="pago-btn active" data-metodo="efectivo" onclick="seleccionarPago(this)">💵 Efectivo</button>
+                  <button class="pago-btn" data-metodo="transferencia" onclick="seleccionarPago(this)">📱 Transfer.</button>
+                  <button class="pago-btn" data-metodo="debito" onclick="seleccionarPago(this)">💳 Débito</button>
+                  <button class="pago-btn" data-metodo="credito" onclick="seleccionarPago(this)">💳 Crédito</button>
+                  <button class="pago-btn" data-metodo="qr" onclick="seleccionarPago(this)">📷 QR</button>
+                </div>
+              </div>
+              <div class="factura-row">
+                <label>
+                  <input type="checkbox" id="chk-facturar" onchange="onFacturarChange()">
+                  🧾 Emitir comprobante
+                </label>
+                <span class="factura-badge" id="factura-badge">Factura B</span>
+              </div>
+              <div class="cart-total">
+                <span>TOTAL</span>
+                <span class="cart-total-value" id="cart-total">$0</span>
+              </div>
+              <button class="btn btn-success" onclick="confirmarVenta()">✓ Confirmar venta</button>
+              <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:6px" onclick="vaciarCarrito()">Vaciar carrito</button>
+            </div>
+          </div>
+
+          <!-- 3. HISTORIAL RECIENTE -->
+          <div class="card" style="margin-top:1.25rem">
+            <div class="card-header"><span class="card-title">Historial reciente</span></div>
+            <div class="card-body">
+              <div class="feed" id="feed-movimientos">
+                <div class="empty">Sin movimientos aún</div>
               </div>
             </div>
           </div>
 
-          <!-- PANEL CARRITO -->
-          <div>
-            <div class="cart-panel">
-              <div class="cart-header">
-                🛒 Carrito de venta
-                <span class="cart-count" id="cart-count">0 items</span>
-              </div>
-              <div class="cart-body" id="cart-body">
-                <div class="cart-empty">El carrito está vacío.<br>Seleccioná productos y hacé click en "Añadir".</div>
-              </div>
-              <div class="cart-footer" id="cart-footer" style="display:none">
-                <!-- MÉTODO DE PAGO -->
-                <div class="pago-section">
-                  <div class="pago-label">Método de pago</div>
-                  <div class="pago-btns">
-                    <button class="pago-btn active" data-metodo="efectivo" onclick="seleccionarPago(this)">💵 Efectivo</button>
-                    <button class="pago-btn" data-metodo="transferencia" onclick="seleccionarPago(this)">📱 Transfer.</button>
-                    <button class="pago-btn" data-metodo="debito" onclick="seleccionarPago(this)">💳 Débito</button>
-                    <button class="pago-btn" data-metodo="credito" onclick="seleccionarPago(this)">💳 Crédito</button>
-                    <button class="pago-btn" data-metodo="qr" onclick="seleccionarPago(this)">📷 QR</button>
-                  </div>
-                </div>
-                <!-- FACTURAR -->
-                <div class="factura-row">
-                  <label>
-                    <input type="checkbox" id="chk-facturar" onchange="onFacturarChange()">
-                    🧾 Emitir comprobante
-                  </label>
-                  <span class="factura-badge" id="factura-badge">Factura B</span>
-                </div>
-                <!-- TOTAL -->
-                <div class="cart-total">
-                  <span>TOTAL</span>
-                  <span class="cart-total-value" id="cart-total">$0</span>
-                </div>
-                <button class="btn btn-success" onclick="confirmarVenta()">✓ Confirmar venta</button>
-                <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:6px" onclick="vaciarCarrito()">Vaciar carrito</button>
+          <!-- 4. VENTAS RECIENTES (anular) -->
+          <div class="card" style="margin-top:1.25rem">
+            <div class="card-header">
+              <span class="card-title">Ventas recientes</span>
+              <span style="font-size:.72rem;color:var(--muted)">Podés anular una venta cargada por error</span>
+            </div>
+            <div class="card-body">
+              <div class="feed" id="feed-ventas">
+                <div class="empty">Sin ventas registradas</div>
               </div>
             </div>
           </div>
@@ -1705,7 +1713,10 @@ function renderTablaProductos(lista) {
       <td>${p.bajo_stock
         ? '<span class="badge badge-danger" title="Este producto está en rojo porque su stock actual es menor al mínimo definido. Conviene reponerlo.">Stock bajo</span>'
         : '<span class="badge badge-ok" title="El stock de este producto está por encima del mínimo. No requiere reposición.">OK</span>'}</td>
-      <td><button class="btn btn-sm btn-outline" onclick="abrirModalEditar(${p.id})" title="Editar este producto">✏️ Editar</button></td>
+    <td style="white-space:nowrap">
+        <button class="btn btn-sm btn-outline" onclick="abrirModalEditar(${p.id})" title="Editar este producto">✏️ Editar</button>
+        <button class="btn btn-sm btn-ghost" onclick="darBajaProducto(${p.id}, '${p.nombre.replace(/'/g, "\\'")}')" title="Dar de baja este producto" style="color:var(--rojo);border-color:var(--rojo)">🗑️ Baja</button>
+      </td>
     </tr>
   `).join('');
 }
@@ -2308,8 +2319,52 @@ async function cargarMovimientos() {
     const feedEntrada = document.getElementById('feed-movimientos-entrada');
     if (feedEntrada) feedEntrada.innerHTML = html;
   } catch(e) {}
+  cargarVentas();
 }
 
+// ── Historial de ventas + anulación (Nielsen H3) ──
+async function cargarVentas() {
+  try {
+    const r = await fetch('/api/ventas');
+    const data = await r.json();
+    const cont = document.getElementById('feed-ventas');
+    if (!cont) return;
+    if (data.length === 0) {
+      cont.innerHTML = '<div class="empty">Sin ventas registradas</div>';
+      return;
+    }
+    cont.innerHTML = data.map(v => `
+      <div class="feed-item ${v.anulada ? 'rojo' : 'ok'}" style="font-size:.85rem;display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <div>
+          <strong>Venta #${v.id}</strong> · ${moneda(v.total)} · ${v.items_count || '—'} item(s)
+          ${v.anulada ? '<span class="badge badge-danger" style="margin-left:6px">ANULADA</span>' : ''}
+          <div class="feed-meta">${formatFecha(v.created_at)} · ${v.metodo_pago || ''}</div>
+        </div>
+        ${v.anulada
+          ? ''
+          : `<button class="btn btn-sm btn-ghost" style="color:var(--rojo);border-color:var(--rojo)" onclick="anularVenta(${v.id})">↩ Anular</button>`}
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+async function anularVenta(ventaId) {
+  // Nielsen H3: confirmación antes de una acción que modifica el stock
+  if (!confirm(`¿Anular la venta #${ventaId}?\n\nSe devolverá el stock de todos sus productos. Esta acción queda registrada en el historial.`)) {
+    return;
+  }
+  try {
+    const r = await fetch(`/api/ventas/${ventaId}/anular`, { method: 'POST' });
+    const data = await r.json();
+    if (!r.ok) { toast(data.error, 'error'); return; }
+    toast(`Venta #${ventaId} anulada — stock devuelto`);
+    cargarProductos();
+    cargarMovimientos();
+    cargarStats();
+  } catch(e) {
+    toast('Error al anular la venta.', 'error');
+  }
+}
 // ══════════════════════════════════════════════════════════
 //  ALERTAS
 // ══════════════════════════════════════════════════════════
@@ -2592,6 +2647,30 @@ async function cargarReporteRotacion() {
     `).join('');
   } catch(e) {
     toast('Error al cargar el reporte de rotación', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  DAR DE BAJA PRODUCTO (CRUD - Delete lógico)
+// ══════════════════════════════════════════════════════════
+async function darBajaProducto(pid, nombre) {
+  if (sesion.rol !== 'Administrador') {
+    toast('Solo el Administrador puede dar de baja productos.', 'error');
+    return;
+  }
+  // Nielsen H3: pedir confirmación antes de una acción destructiva
+  if (!confirm(`¿Dar de baja el producto "${nombre}"?\n\nDejará de aparecer en el inventario, pero se conservará en el historial de ventas.`)) {
+    return;
+  }
+  try {
+    const r = await fetch(`/api/productos/${pid}`, { method: 'DELETE' });
+    const data = await r.json();
+    if (!r.ok) { toast(data.error, 'error'); return; }
+    toast(`Producto "${nombre}" dado de baja`);
+    cargarProductos();
+    checkBanner();
+  } catch(e) {
+    toast('Error al dar de baja el producto.', 'error');
   }
 }
 

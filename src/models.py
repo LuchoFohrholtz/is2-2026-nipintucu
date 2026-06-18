@@ -95,6 +95,51 @@ class OrdenReposicion(Observador):
         return result.data if result.data else None
 
 
+class NotificadorEmail(Observador):
+    """
+    Observador concreto (tercer observador del patrón Observer).
+    Ante stock bajo, simula el envío de un email al encargado de compras.
+
+    Es un MOCK: en lugar de enviar un correo real por SMTP, registra el
+    "email enviado" en la tabla 'notificaciones' de Supabase. Esto deja
+    constancia auditable y funciona en entornos serverless (Vercel), donde
+    no se puede escribir a archivos locales. En producción, bastaría con
+    reemplazar el cuerpo de actualizar() por una llamada real a un servidor
+    SMTP, sin tocar el resto del sistema (extensibilidad del patrón Observer).
+    """
+    EMAIL_DESTINO = "compras@ferrerap.com"
+
+    def __init__(self, db):
+        self.db = db
+
+    def actualizar(self, producto):
+        try:
+            nombre = producto.get("nombre", "Producto")
+            stock_actual = producto.get("stock_actual", 0)
+            stock_minimo = producto.get("stock_minimo", 0)
+            categoria = producto.get("categoria", "")
+            asunto = f"[FerreRAP] Stock bajo: {nombre}"
+            cuerpo = (
+                f"El producto '{nombre}' (categoria {categoria or 'N/D'}) "
+                f"cayo a {stock_actual} unidades, por debajo del minimo de "
+                f"{stock_minimo}. Se recomienda reponer."
+            )
+            entrada = {
+                "producto_nombre": nombre,
+                "categoria": categoria,
+                "email_destino": self.EMAIL_DESTINO,
+                "asunto": asunto,
+                "cuerpo": cuerpo,
+                "stock_actual": stock_actual,
+                "stock_minimo": stock_minimo,
+            }
+            self.db.table("notificaciones").insert(entrada).execute()
+            return {"tipo": "email", "destino": self.EMAIL_DESTINO, "asunto": asunto}
+        except Exception as e:
+            # Una notificacion que falla nunca debe tumbar la venta.
+            print(f"  ! NotificadorEmail no pudo registrar la notificacion: {e}")
+            return None
+
 # ─────────────────────────────────────────────────────────────
 #  PATRÓN STRATEGY
 #  Contexto: GeneradorReporte
