@@ -4,7 +4,14 @@ IS2 · UCP · 2026
 """
 
 import os
+import sys
+import io
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Asegura que el directorio del módulo esté en sys.path para que los imports
+# locales (database, models) funcionen en el entorno serverless de Vercel,
+# donde el cwd / sys.path no incluye necesariamente esta carpeta.
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 from datetime import datetime
 
 from flask import Flask, jsonify, request, send_from_directory, send_file

@@ -4,55 +4,59 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FerreRAP — Gestión de Stock</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════
    VARIABLES — MODO CLARO Y OSCURO
 ═══════════════════════════════════════════ */
 :root {
-  --bg:        #f4f5f7;
+  --bg:        #eceae3;
   --surface:   #ffffff;
-  --surface2:  #f9fafb;
-  --border:    #e2e5ea;
-  --border2:   #d0d5dd;
-  --azul:      #1a4f8a;
-  --azul-l:    #e8f0fb;
-  --azul-btn:  #2563eb;
-  --azul-h:    #1d4ed8;
-  --verde:     #16a34a;
-  --verde-l:   #dcfce7;
-  --rojo:      #dc2626;
-  --rojo-l:    #fee2e2;
-  --naranja:   #d97706;
-  --naranja-l: #fef3c7;
-  --texto:     #111827;
-  --muted:     #6b7280;
-  --muted2:    #9ca3af;
-  --shadow:    0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
-  --shadow-md: 0 4px 12px rgba(0,0,0,.10);
+  --surface2:  #faf8f2;
+  --border:    #e7e3d8;
+  --border2:   #d8d2c4;
+  --azul:      #1a1813;
+  --azul-l:    #fbf3d4;
+  --azul-btn:  #f5c518;
+  --azul-h:    #e6b813;
+  --verde:     #1f8a4d;
+  --verde-l:   #e7f4ec;
+  --rojo:      #d23f2d;
+  --rojo-l:    #fbe9e6;
+  --naranja:   #c8881a;
+  --naranja-l: #fbf0d8;
+  --texto:     #1a1813;
+  --muted:     #6f6a5f;
+  --muted2:    #9a948a;
+  --on-primary:#1a1813;
+  --header-bg: #1a1813;
+  --shadow:    0 1px 3px rgba(26,24,19,.07), 0 1px 2px rgba(26,24,19,.05);
+  --shadow-md: 0 4px 12px rgba(26,24,19,.10);
   --radius:    8px;
   --mono:      'DM Mono', monospace;
   --sans:      'DM Sans', sans-serif;
 }
 [data-theme="dark"] {
-  --bg:        #0f1117;
-  --surface:   #1a1d27;
-  --surface2:  #22263a;
-  --border:    #2d3148;
-  --border2:   #3a3f5c;
-  --azul:      #3b82f6;
-  --azul-l:    #1e2a45;
-  --azul-btn:  #3b82f6;
-  --azul-h:    #60a5fa;
-  --verde:     #22c55e;
-  --verde-l:   #14291e;
-  --rojo:      #f87171;
-  --rojo-l:    #2c1515;
-  --naranja:   #fbbf24;
-  --naranja-l: #2c2010;
-  --texto:     #f1f5f9;
-  --muted:     #8b92a9;
-  --muted2:    #5a6178;
+  --bg:        #14120e;
+  --surface:   #1f1c16;
+  --surface2:  #262218;
+  --border:    #322d23;
+  --border2:   #423b2d;
+  --azul:      #f5c518;
+  --azul-l:    #2c2719;
+  --azul-btn:  #f5c518;
+  --azul-h:    #ffce2e;
+  --verde:     #38aa62;
+  --verde-l:   #1c2c20;
+  --rojo:      #e25744;
+  --rojo-l:    #2e1a16;
+  --naranja:   #e0a52a;
+  --naranja-l: #2c2410;
+  --texto:     #f5f2ea;
+  --muted:     #b8b3a6;
+  --muted2:    #8d8676;
+  --on-primary:#1a1813;
+  --header-bg: #0e0c09;
   --shadow:    0 1px 3px rgba(0,0,0,.3);
   --shadow-md: 0 4px 16px rgba(0,0,0,.4);
 }
@@ -68,125 +72,141 @@ body {
 }
 
 /* ═══════════════════════════════════════════
-   PANTALLA DE LOGIN — ESTILO GRAFFITI NEON
+   PANTALLA DE LOGIN — DISEÑO FERRERAP (panel marca + form)
 ═══════════════════════════════════════════ */
+@keyframes ferStripeDrift { from { background-position: 0 0; } to { background-position: 48px 48px; } }
+@keyframes ferPhraseIn {
+  0%   { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes ferAccentGrow {
+  0%   { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+
 #pantalla-login {
-  min-height: 100vh;
-  display: flex; align-items: center; justify-content: center;
-  padding: 2rem;
-  position: relative; overflow: hidden;
-  /* Fondo oscuro tipo pared urbana */
-  background:
-    radial-gradient(ellipse 80% 60% at 15% 30%, rgba(20,30,60,.7) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 85% 70%, rgba(10,20,50,.8) 0%, transparent 55%),
-    radial-gradient(ellipse 100% 80% at 50% 50%, rgba(5,8,20,1) 0%, rgba(10,12,25,1) 100%);
-  background-color: #090c18;
-}
-/* Graffiti tags decorativos via pseudo-elementos */
-#pantalla-login::before {
-  content: '';
-  position: absolute; inset: 0; pointer-events: none;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Ctext x='30' y='120' font-family='Impact' font-size='90' fill='rgba(255,255,255,.04)' transform='rotate(-15,30,120)'%3EFERRERAP%3C/text%3E%3Ctext x='500' y='80' font-family='Impact' font-size='70' fill='rgba(255,255,255,.04)' transform='rotate(10,500,80)'%3ENACH%3C/text%3E%3Ctext x='10' y='400' font-family='Impact' font-size='100' fill='rgba(255,255,255,.03)' transform='rotate(-8,10,400)'%3EFENIK%3C/text%3E%3Ctext x='550' y='480' font-family='Impact' font-size='80' fill='rgba(255,255,255,.04)' transform='rotate(12,550,480)'%3ESUDRI%3C/text%3E%3Ctext x='200' y='560' font-family='Impact' font-size='60' fill='rgba(255,255,255,.03)' transform='rotate(-5,200,560)'%3EGRAFFITI%3C/text%3E%3C/svg%3E");
-  background-size: cover; background-repeat: no-repeat;
-  opacity: 1;
+  width: 100vw; height: 100vh;
+  font-family: 'Archivo', system-ui, sans-serif;
+  display: flex;
+  padding: 0; margin: 0;
+  overflow: hidden;
 }
 
-/* Card de login */
-.login-wrap {
-  position: relative;
-  display: flex; flex-direction: column; align-items: center;
-  width: 100%; max-width: 400px;
+.fer-card {
+  width: 100%; height: 100%;
+  background: #fff;
+  overflow: hidden; display: flex;
 }
 
-/* Logo flotando sobre la card */
-.login-logo-float {
-  position: relative; z-index: 2;
-  margin-bottom: -60px;
+/* PANEL IZQUIERDO (marca animada) */
+.fer-left {
+  width: 68%; background: #1a1813; position: relative;
+  padding: 44px 48px;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center;
+  overflow: hidden;
+  transition: width 0.4s ease;
 }
-.login-logo-float img {
-  width: 170px; height: auto;
-  filter: drop-shadow(0 4px 28px rgba(0,120,255,.6)) drop-shadow(0 0 12px rgba(0,120,255,.4));
+/* Hover: cuando el mouse pasa por el login, se abre */
+.fer-card:has(.fer-right:hover) .fer-left { width: 50%; }
+.fer-left-stripes {
+  position: absolute; inset: 0; opacity: .06;
+  background-image: repeating-linear-gradient(135deg, #f5c518 0 14px, transparent 14px 34px);
+  animation: ferStripeDrift 6s linear infinite;
 }
+.fer-brand {
+  position: relative; display: flex; align-items: center; gap: 12px;
+}
+.fer-brand img { width: 60px; height: 60px; object-fit: contain; }
+.fer-brand span { font-weight: 800; font-size: 28px; letter-spacing: .05em; color: #fff; }
 
-.login-box {
-  background: rgba(12, 14, 28, 0.96);
-  border: 2px solid rgba(30, 130, 255, 0.8);
-  border-radius: 18px;
-  padding: 5rem 2.5rem 2rem;
-  width: 100%;
-  position: relative;
-  box-shadow:
-    0 0 30px rgba(30,130,255,.4),
-    0 0 80px rgba(30,130,255,.15),
-    inset 0 0 30px rgba(0,60,160,.1);
-  animation: neonPulse 3s ease-in-out infinite;
+.fer-left-mid { position: relative; min-height: 200px; }
+.fer-accent {
+  width: 46px; height: 4px; background: #f5c518; margin: 28px auto 24px;
+  transform-origin: center; animation: ferAccentGrow .5s ease both;
 }
-@keyframes neonPulse {
-  0%,100% { box-shadow: 0 0 30px rgba(30,130,255,.4), 0 0 80px rgba(30,130,255,.15), inset 0 0 30px rgba(0,60,160,.1); border-color: rgba(30,130,255,.8); }
-  50%      { box-shadow: 0 0 50px rgba(30,130,255,.6), 0 0 120px rgba(30,130,255,.25), inset 0 0 40px rgba(0,60,160,.15); border-color: rgba(80,170,255,1); }
+.fer-rot { animation: ferPhraseIn .55s ease both; }
+.fer-rot h2 {
+  font-size: 58px; font-weight: 800; color: #fff;
+  line-height: 1.1; margin: 0 0 20px; letter-spacing: -0.02em;
 }
+.fer-rot p {
+  font-size: 20px; line-height: 1.55; color: #b8b3a6;
+  margin: 0 auto; max-width: 500px;
+}
+.fer-dots { display: flex; gap: 8px; margin-top: 26px; justify-content: center; }
+.fer-dots span {
+  width: 8px; height: 8px; border-radius: 99px;
+  background: rgba(255,255,255,.22);
+  transition: width .35s ease, background .35s ease;
+}
+.fer-dots span.active { width: 22px; background: #f5c518; }
 
-/* login-title visible: el nuevo logo solo tiene la F, sin texto */
-.login-title {
-  text-align: center; font-size: 2.4rem; font-weight: 900;
-  letter-spacing: .06em; color: #fff;
-  text-shadow: 0 0 20px rgba(30,130,255,.5);
-  margin-bottom: 1.75rem; font-family: var(--sans);
-}
+.fer-stats { position: relative; display: flex; gap: 48px; margin-top: 36px; }
+.fer-stats .num { font-size: 34px; font-weight: 800; color: #f5c518; }
+.fer-stats .lbl { font-size: 14px; color: #8a857a; }
 
-/* Inputs del login con estilo dark */
-.login-box .form-group { margin-bottom: 1rem; }
-.login-box label {
-  display: block; font-size: .82rem; font-weight: 500;
-  color: rgba(255,255,255,.8); margin-bottom: 6px;
+/* FORM DERECHA */
+.fer-right {
+  flex: 1; padding: 60px 64px;
+  display: flex; flex-direction: column; justify-content: center;
+  transition: flex 0.4s ease;
 }
-.login-box input {
-  width: 100%; background: rgba(255,255,255,.06);
-  border: 1.5px solid rgba(30,130,255,.5);
-  border-radius: 10px; color: #fff;
-  font-size: .95rem; padding: 11px 14px;
-  outline: none; transition: border-color .2s, box-shadow .2s;
-  font-family: var(--sans);
+.fer-right h1 {
+  font-size: 29px; font-weight: 800; color: #1a1813;
+  margin: 0 0 6px; letter-spacing: -0.01em;
 }
-.login-box input::placeholder { color: rgba(255,255,255,.3); }
-.login-box input:focus {
-  border-color: rgba(30,130,255,.9);
-  box-shadow: 0 0 0 3px rgba(30,130,255,.2), 0 0 12px rgba(30,130,255,.2);
+.fer-sub { font-size: 14px; color: #6f6a5f; margin: 0 0 34px; }
+.fer-right label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: #3a362e; margin-bottom: 7px;
 }
-
-/* Botón Ingresar */
-.btn-login {
-  width: 100%; padding: 13px;
-  background: linear-gradient(135deg, #1a6aff 0%, #0d4fd6 100%);
-  color: #fff; font-size: 1rem; font-weight: 700; letter-spacing: .04em;
-  border: none; border-radius: 50px; cursor: pointer;
-  font-family: var(--sans); margin-top: .5rem;
-  transition: all .2s; text-shadow: 0 1px 4px rgba(0,0,0,.4);
-  box-shadow: 0 4px 20px rgba(30,130,255,.4);
+.fer-input {
+  width: 100%; padding: 13px 15px; font-size: 15px;
+  font-family: inherit; border: 1.5px solid #dedacf;
+  border-radius: 9px; background: #fcfbf7; color: #1a1813;
+  outline: none; margin-bottom: 18px; transition: border-color .12s ease;
 }
-.btn-login:hover {
-  background: linear-gradient(135deg, #3d84ff 0%, #1a5ee8 100%);
-  box-shadow: 0 6px 28px rgba(30,130,255,.6);
-  transform: translateY(-1px);
+.fer-input:focus { border-color: #1a1813; }
+.fer-pass-row {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px;
 }
-.btn-login:active { transform: translateY(0); }
-
-/* Links footer login */
-.login-footer {
-  display: flex; justify-content: space-between;
-  margin-top: 1.25rem; font-size: .82rem;
+.fer-pass-row a { font-size: 12px; color: #8a857a; text-decoration: none; }
+.fer-remember {
+  display: flex; align-items: center; gap: 9px; font-size: 13px;
+  color: #6f6a5f; margin-bottom: 28px; cursor: pointer;
 }
-.login-footer a {
-  color: rgba(30,130,255,.8); text-decoration: none;
-  transition: color .15s;
+.fer-remember .box {
+  width: 18px; height: 18px; border: 1.5px solid #dedacf;
+  border-radius: 5px; display: inline-block; background: #fff;
 }
-.login-footer a:hover { color: #60a5fa; }
+.fer-btn {
+  width: 100%; padding: 15px; font-size: 15px; font-weight: 700;
+  font-family: inherit; color: #1a1813; background: #f5c518;
+  border: none; border-radius: 9px; cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.fer-btn:hover { background: #ffce2e; box-shadow: 0 6px 18px -8px rgba(245,197,24,.9); }
+.fer-btn:active { transform: translateY(1px); }
+.fer-foot { text-align: center; margin-top: 24px; font-size: 13px; color: #8a857a; }
+.fer-foot a { color: #1a1813; font-weight: 600; text-decoration: none; border-bottom: 2px solid #f5c518; }
 
 .login-error {
-  background: rgba(220,38,38,.15); border: 1px solid rgba(220,38,38,.5);
+  background: #fde8e8; border: 1px solid #f5b5b5;
   border-radius: 8px; padding: 9px 14px; font-size: 0.85rem;
-  color: #fca5a5; margin-bottom: 1rem; display: none;
+  color: #b91c1c; margin-bottom: 16px; display: none;
+}
+
+@media (max-width: 640px) {
+  #pantalla-login { height: auto; min-height: 100vh; }
+  .fer-card { flex-direction: column; height: auto; min-height: 100vh; }
+  .fer-left { width: 100%; padding: 30px 26px 26px; gap: 22px; }
+  .fer-left-mid { min-height: 0; }
+  .fer-rot h2 { font-size: 26px; }
+  .fer-rot p { font-size: 14px; }
+  .fer-stats { display: none; }
+  .fer-right { padding: 34px 26px 44px; }
+  .fer-right h1 { font-size: 26px; }
 }
 
 /* ═══════════════════════════════════════════
@@ -195,14 +215,14 @@ body {
 #pantalla-app { display: none; }
 
 header {
-  background: var(--azul-btn); padding: 0 1.5rem; height: 56px;
+  background: var(--header-bg); padding: 0 1.5rem; height: 56px;
   display: flex; align-items: center; gap: 0;
   position: sticky; top: 0; z-index: 100;
   box-shadow: 0 2px 8px rgba(0,0,0,.2);
 }
-[data-theme="dark"] header { background: var(--surface); border-bottom: 1px solid var(--border); }
+[data-theme="dark"] header { background: var(--header-bg); border-bottom: 1px solid var(--border); }
 .logo { font-size: 1.2rem; font-weight: 700; color: #fff; flex: 1; }
-.logo span { opacity: .7; }
+.logo span { color: var(--azul-btn); }
 [data-theme="dark"] .logo { color: var(--texto); }
 
 .header-right { display: flex; align-items: center; gap: 8px; position: relative; }
@@ -215,10 +235,10 @@ header {
 [data-theme="dark"] .user-chip { color: var(--muted); background: var(--surface2); }
 .rol-badge {
   font-size: 0.68rem; font-weight: 600; padding: 2px 6px; border-radius: 3px;
-  background: rgba(255,255,255,.25); color: #fff;
+  background: var(--azul-btn); color: var(--on-primary);
   text-transform: uppercase; letter-spacing: .05em;
 }
-[data-theme="dark"] .rol-badge { background: var(--azul-l); color: var(--azul-btn); }
+[data-theme="dark"] .rol-badge { background: var(--azul-btn); color: var(--on-primary); }
 
 .btn-icon {
   background: rgba(255,255,255,.15); border: none; border-radius: 6px;
@@ -274,7 +294,7 @@ nav {
   white-space: nowrap; transition: color .15s, border-color .15s;
 }
 .tab:hover  { color: var(--texto); }
-.tab.active { color: var(--azul-btn); border-bottom-color: var(--azul-btn); }
+.tab.active { color: var(--texto); border-bottom-color: var(--azul-btn); font-weight: 700; }
 .tab.solo-admin { opacity: .5; }
 .tab.solo-admin.visible { opacity: 1; }
 
@@ -297,7 +317,7 @@ main { max-width: 1240px; margin: 0 auto; padding: 1.75rem; }
 .page-sub    { font-size: .85rem; color: var(--muted); }
 .patron-tag {
   display: inline-flex; align-items: center; gap: 5px;
-  font-family: var(--mono); font-size: .7rem; color: var(--azul-btn);
+  font-family: var(--mono); font-size: .7rem; color: var(--azul);
   background: var(--azul-l); border: 1px solid var(--border);
   padding: 3px 8px; border-radius: 4px; margin-top: 6px;
 }
@@ -345,9 +365,9 @@ th {
   border-bottom: 1px solid var(--border); white-space: nowrap; cursor: default;
 }
 th.sortable { cursor: pointer; user-select: none; }
-th.sortable:hover { color: var(--azul-btn); }
+th.sortable:hover { color: var(--texto); }
 th .sort-arrow { font-size: .6rem; margin-left: 3px; opacity: .4; }
-th.sort-active .sort-arrow { opacity: 1; color: var(--azul-btn); }
+th.sort-active .sort-arrow { opacity: 1; color: var(--texto); }
 td {
   padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle;
 }
@@ -362,7 +382,7 @@ tbody tr:hover   { background: var(--surface2); }
 .badge-ok      { background: var(--verde-l);   color: var(--verde);   }
 .badge-danger  { background: var(--rojo-l);    color: var(--rojo);    }
 .badge-warn    { background: var(--naranja-l); color: var(--naranja); }
-.badge-cat     { background: var(--azul-l);    color: var(--azul-btn);}
+.badge-cat     { background: var(--azul-l);    color: var(--azul);}
 .badge-entrada { background: var(--verde-l);   color: var(--verde);   }
 .badge-salida  { background: var(--rojo-l);    color: var(--rojo);    }
 .mono { font-family: var(--mono); font-size: .85rem; }
@@ -380,8 +400,8 @@ tbody tr:hover   { background: var(--surface2); }
 }
 .cat-card:hover { border-color: var(--azul-btn); background: var(--azul-l); }
 .cat-card.active {
-  border-color: var(--azul-btn); background: var(--azul-btn); color: #fff;
-  box-shadow: 0 2px 8px rgba(37,99,235,.3);
+  border-color: var(--azul-btn); background: var(--azul-btn); color: var(--on-primary);
+  box-shadow: 0 2px 8px rgba(245,197,24,.4);
 }
 .cat-card .cat-icon { font-size: 1.1rem; }
 .cat-card .cat-name { font-weight: 500; flex: 1; }
@@ -389,7 +409,7 @@ tbody tr:hover   { background: var(--surface2); }
   font-size: .68rem; font-family: var(--mono);
   background: var(--surface2); padding: 2px 6px; border-radius: 4px;
 }
-.cat-card.active .cat-count { background: rgba(255,255,255,.2); color: #fff; }
+.cat-card.active .cat-count { background: rgba(26,24,19,.15); color: var(--on-primary); }
 
 /* SORT BAR */
 .sort-bar { display: flex; align-items: center; gap: 6px; }
@@ -399,8 +419,8 @@ tbody tr:hover   { background: var(--surface2); }
   border-radius: 4px; padding: 4px 10px; cursor: pointer;
   color: var(--muted); transition: all .12s;
 }
-.sort-btn:hover { border-color: var(--azul-btn); color: var(--azul-btn); }
-.sort-btn.active { background: var(--azul-btn); color: #fff; border-color: var(--azul-btn); }
+.sort-btn:hover { border-color: var(--azul-btn); color: var(--texto); }
+.sort-btn.active { background: var(--azul-btn); color: var(--on-primary); border-color: var(--azul-btn); }
 
 /* ═══════════════════════════════════════════
    MOVIMIENTOS — CARRITO
@@ -419,7 +439,7 @@ tbody tr:hover   { background: var(--surface2); }
   border: none; background: none; cursor: pointer; color: var(--muted);
   transition: all .15s; font-family: var(--sans);
 }
-.mode-btn.active { background: var(--azul-btn); color: #fff; }
+.mode-btn.active { background: var(--azul-btn); color: var(--on-primary); }
 .mode-section { display: none; }
 .mode-section.active { display: block; }
 
@@ -440,12 +460,12 @@ tbody tr:hover   { background: var(--surface2); }
   border-radius: var(--radius); overflow: hidden;
 }
 .cart-header {
-  padding: 12px 16px; background: var(--azul-btn); color: #fff;
+  padding: 12px 16px; background: var(--azul-btn); color: var(--on-primary);
   display: flex; align-items: center; gap: 8px;
   font-size: .9rem; font-weight: 600;
 }
 .cart-header .cart-count {
-  font-size: .72rem; background: rgba(255,255,255,.2);
+  font-size: .72rem; background: rgba(26,24,19,.15);
   padding: 2px 8px; border-radius: 10px;
 }
 .cart-body { padding: 0; max-height: 340px; overflow-y: auto; }
@@ -513,11 +533,11 @@ tbody tr:hover   { background: var(--surface2); }
   cursor: pointer; font-family: var(--sans);
   transition: all .15s; text-align: center; white-space: nowrap;
 }
-.pago-btn:hover { border-color: var(--azul-btn); color: var(--azul-btn); }
+.pago-btn:hover { border-color: var(--azul-btn); color: var(--texto); }
 .pago-btn.active {
-  background: var(--azul-btn); color: #fff;
+  background: var(--azul-btn); color: var(--on-primary);
   border-color: var(--azul-btn);
-  box-shadow: 0 2px 8px rgba(59,130,246,.3);
+  box-shadow: 0 2px 8px rgba(245,197,24,.4);
 }
 
 /* FACTURAR ROW */
@@ -529,7 +549,7 @@ tbody tr:hover   { background: var(--surface2); }
 .factura-row input[type=checkbox] { width: auto; cursor: pointer; accent-color: var(--azul-btn); width: 16px; height: 16px; }
 .factura-badge {
   font-size: .7rem; padding: 2px 8px; border-radius: 10px;
-  background: var(--azul-l); color: var(--azul-btn);
+  background: var(--azul-l); color: var(--azul);
   font-weight: 600; display: none;
 }
 .factura-badge.visible { display: inline-block; }
@@ -564,7 +584,7 @@ tbody tr:hover   { background: var(--surface2); }
   display: inline-block; padding: 4px 12px; border-radius: 6px;
   font-size: .78rem; font-weight: 700; margin-top: 4px;
 }
-.tipo-b { background: var(--azul-l); color: var(--azul-btn); }
+.tipo-b { background: var(--azul-l); color: var(--azul); }
 .tipo-a { background: var(--verde-l); color: var(--verde); }
 .required-mark { color: var(--rojo); margin-left: 2px; }
 .modal-factura-footer {
@@ -594,7 +614,7 @@ input, select {
 }
 input:focus, select:focus {
   border-color: var(--azul-btn);
-  box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+  box-shadow: 0 0 0 3px rgba(245,197,24,.25);
 }
 
 /* BOTONES */
@@ -605,11 +625,11 @@ input:focus, select:focus {
   transition: background .15s, transform .1s; width: 100%;
 }
 .btn:active { transform: scale(.98); }
-.btn-primary { background: var(--azul-btn); color: #fff; }
+.btn-primary { background: var(--azul-btn); color: var(--on-primary); }
 .btn-primary:hover { background: var(--azul-h); }
 .btn-success { background: var(--verde); color: #fff; }
 .btn-success:hover { background: #15803d; }
-.btn-outline { background: transparent; color: var(--azul-btn); border: 1px solid var(--azul-btn); }
+.btn-outline { background: transparent; color: var(--texto); border: 1px solid var(--azul-btn); }
 .btn-outline:hover { background: var(--azul-l); }
 .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
 .btn-ghost:hover { border-color: var(--border2); color: var(--texto); }
@@ -738,29 +758,65 @@ input:focus, select:focus {
      PANTALLA DE LOGIN
 ════════════════════════════════════ -->
 <div id="pantalla-login">
-  <div class="login-wrap">
-    <!-- Logo flotando sobre la card -->
-    <div class="login-logo-float">
-      <img src="logo.png" alt="FerreRAP">
+  <div class="fer-card">
+
+    <!-- PANEL IZQUIERDO: marca animada -->
+    <div class="fer-left">
+      <div class="fer-left-stripes"></div>
+
+      <div class="fer-brand">
+        <img src="logo.png" alt="FERRERAP">
+        <span>FERRERAP</span>
+      </div>
+
+      <div class="fer-left-mid">
+        <div class="fer-accent"></div>
+        <div class="fer-rot" id="fer-rot">
+          <h2 id="fer-rot-title">Tu ferretería,<br>bajo control.</h2>
+          <p id="fer-rot-sub">Controlá stock, precios y proveedores desde un solo lugar.</p>
+        </div>
+        <div class="fer-dots" id="fer-dots"></div>
+      </div>
+
+      <div class="fer-stats">
+        <div>
+          <div class="num">+2.400</div>
+          <div class="lbl">artículos por sucursal</div>
+        </div>
+        <div>
+          <div class="num">24/7</div>
+          <div class="lbl">acceso web</div>
+        </div>
+      </div>
     </div>
-    <div class="login-box">
-      <div class="login-title">FERRERAP</div>
+
+    <!-- FORM DERECHA -->
+    <div class="fer-right">
+      <h1>Iniciar sesión</h1>
+      <p class="fer-sub">Ingresá con tu cuenta de FERRERAP.</p>
+
       <div class="login-error" id="login-error"></div>
-      <div class="form-group">
-        <label>Usuario</label>
-        <input type="text" id="l-usuario" placeholder="Ingresá tu usuario" autocomplete="username">
-      </div>
-      <div class="form-group">
+
+      <label>Usuario</label>
+      <input class="fer-input" type="text" id="l-usuario" placeholder="tu.usuario" autocomplete="username">
+
+      <div class="fer-pass-row">
         <label>Contraseña</label>
-        <input type="password" id="l-password" placeholder="••••••••" autocomplete="current-password"
-               onkeydown="if(event.key==='Enter') hacerLogin()">
+        <a href="#">¿La olvidaste?</a>
       </div>
-      <button class="btn-login" onclick="hacerLogin()">Ingresar</button>
-      <div class="login-footer">
-        <a href="#">&#191;Olvidaste tu contraseña?</a>
-        <a href="#">Crear cuenta</a>
-      </div>
+      <input class="fer-input" type="password" id="l-password" placeholder="••••••••" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter') hacerLogin()">
+
+      <label class="fer-remember">
+        <span class="box"></span>
+        Mantener sesión iniciada
+      </label>
+
+      <button class="fer-btn" onclick="hacerLogin()">Ingresar</button>
+
+      <div class="fer-foot">¿No tenés cuenta? <a href="#">Solicitá acceso</a></div>
     </div>
+
   </div>
 </div>
 
@@ -770,7 +826,7 @@ input:focus, select:focus {
 <div id="pantalla-app">
 
   <header>
-    <div class="logo">FerreRAP</div>
+    <div class="logo">Ferre<span>RAP</span></div>
     <div class="header-right">
       <div class="user-chip">
         <span id="chip-usuario">—</span>
@@ -1255,6 +1311,47 @@ input:focus, select:focus {
 // ══════════════════════════════════════════════════════════
 //  ESTADO GLOBAL
 // ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+//  LOGIN — frases rotativas del panel de marca
+// ══════════════════════════════════════════════════════════
+const ferPhrases = [
+  { t: 'Tu ferretería,<br>bajo control.', s: 'Controlá stock, precios y proveedores desde un solo lugar.' },
+  { t: 'Inventario<br>sin sorpresas.',    s: 'Sabé qué tenés y qué falta, en tiempo real.' },
+  { t: 'Vendé<br>más rápido.',            s: 'Encontrá cualquier artículo en segundos.' },
+  { t: 'Todo tu negocio,<br>en la web.',  s: 'Desde la PC o el celular, cuando lo necesites.' },
+];
+let ferPhraseIdx = 0;
+
+function ferRenderDots() {
+  const cont = document.getElementById('fer-dots');
+  if (!cont) return;
+  cont.innerHTML = '';
+  ferPhrases.forEach((_, k) => {
+    const s = document.createElement('span');
+    if (k === ferPhraseIdx) s.className = 'active';
+    cont.appendChild(s);
+  });
+}
+function ferRenderPhrase() {
+  const rot = document.getElementById('fer-rot');
+  const title = document.getElementById('fer-rot-title');
+  const sub = document.getElementById('fer-rot-sub');
+  if (!rot || !title || !sub) return;
+  const p = ferPhrases[ferPhraseIdx];
+  title.innerHTML = p.t;
+  sub.textContent = p.s;
+  // re-disparar animación de entrada
+  rot.style.animation = 'none';
+  void rot.offsetWidth;
+  rot.style.animation = '';
+  ferRenderDots();
+}
+ferRenderDots();
+setInterval(() => {
+  ferPhraseIdx = (ferPhraseIdx + 1) % ferPhrases.length;
+  ferRenderPhrase();
+}, 3800);
+
 let sesion = { usuario: null, rol: null };
 let todosLosProductos = [];
 let carrito = [];
@@ -1893,33 +1990,33 @@ function generarComprobante(ventaId, total, items, pago, factura) {
     body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #1a1a1a; background: #f5f5f5; }
     .page { background: #fff; max-width: 680px; margin: 20px auto; padding: 40px; box-shadow: 0 2px 20px rgba(0,0,0,.1); border-radius: 8px; }
     .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
-    .brand { font-size: 24px; font-weight: 900; letter-spacing: -.5px; color: #1a1a2e; }
+    .brand { font-size: 24px; font-weight: 900; letter-spacing: -.5px; color: #1a1813; }
     .brand small { display: block; font-size: 11px; font-weight: 400; color: #666; letter-spacing: 0; margin-top: 2px; }
     .comp-tipo { text-align: right; }
-    .comp-titulo { font-size: 18px; font-weight: 800; color: #1a1a2e; }
+    .comp-titulo { font-size: 18px; font-weight: 800; color: #1a1813; }
     .comp-num { font-size: 13px; color: #666; margin-top: 4px; }
     .divider { border: none; border-top: 2px solid #e5e7eb; margin: 20px 0; }
     .divider-light { border: none; border-top: 1px solid #f0f0f0; margin: 12px 0; }
     .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
     .info-block h4 { font-size: 10px; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
     .info-block p { font-size: 13px; color: #374151; }
-    .info-block p strong { color: #1a1a2e; }
+    .info-block p strong { color: #1a1813; }
     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    thead th { background: #1a1a2e; color: #fff; padding: 10px 12px; font-size: 11px; text-align: left; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+    thead th { background: #1a1813; color: #fff; padding: 10px 12px; font-size: 11px; text-align: left; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
     tbody td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; color: #374151; }
     tbody tr:last-child td { border-bottom: none; }
     tbody tr:hover td { background: #f9fafb; }
     .totales { display: flex; justify-content: flex-end; }
     .totales table { width: 240px; }
     .totales td { padding: 6px 12px; font-size: 13px; }
-    .total-final td { font-size: 16px; font-weight: 800; color: #1a1a2e; border-top: 2px solid #1a1a2e; padding-top: 10px; }
+    .total-final td { font-size: 16px; font-weight: 800; color: #1a1813; border-top: 2px solid #1a1813; padding-top: 10px; }
     .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-    .badge-b { background: #eff6ff; color: #2563eb; }
+    .badge-b { background: #fbf3d4; color: #8a6d12; }
     .badge-a { background: #f0fdf4; color: #16a34a; }
     .badge-pago { background: #f3f4f6; color: #374151; }
     .footer { margin-top: 28px; text-align: center; font-size: 11px; color: #9ca3af; }
     .print-btn-bar { text-align: center; margin: 24px 0 0; }
-    .print-btn { background: #2563eb; color: #fff; border: none; padding: 12px 32px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; margin: 0 6px; }
+    .print-btn { background: #f5c518; color: #1a1813; border: none; padding: 12px 32px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; margin: 0 6px; }
     .close-btn { background: #f3f4f6; color: #374151; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; cursor: pointer; margin: 0 6px; }
     @media print {
       body { background: #fff; }
