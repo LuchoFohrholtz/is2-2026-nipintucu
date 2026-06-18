@@ -145,6 +145,62 @@ class ReporteStockActual(EstrategiaReporte):
         ]
 
 
+class ReporteRotacion(EstrategiaReporte):
+    """
+    Estrategia: analiza la ROTACIÓN de inventario cruzando productos
+    con su historial de movimientos de salida (ventas).
+    Calcula, por producto: total de unidades vendidas, promedio por
+    movimiento de salida y días estimados hasta el quiebre de stock.
+
+    A diferencia de las otras estrategias, recibe los movimientos en el
+    constructor; el método generar(productos) mantiene la misma firma,
+    por lo que GeneradorReporte no necesita ningún cambio.
+    """
+    def __init__(self, movimientos):
+        # Lista de movimientos (de la tabla 'movimientos' de Supabase)
+        self.movimientos = movimientos or []
+
+    def generar(self, productos):
+        # Agrupar salidas por nombre de producto
+        salidas_por_producto = {}
+        eventos_por_producto = {}
+        for m in self.movimientos:
+            if m.get("tipo") == "salida":
+                nombre = m.get("producto_nombre")
+                cant = int(m.get("cantidad", 0))
+                salidas_por_producto[nombre] = salidas_por_producto.get(nombre, 0) + cant
+                eventos_por_producto[nombre] = eventos_por_producto.get(nombre, 0) + 1
+
+        filas = []
+        for p in productos:
+            nombre = p["nombre"]
+            total_salidas = salidas_por_producto.get(nombre, 0)
+            num_eventos = eventos_por_producto.get(nombre, 0)
+            # Promedio de unidades por cada movimiento de salida
+            promedio_salida = round(total_salidas / num_eventos, 2) if num_eventos > 0 else 0
+            # Días estimados hasta quiebre: stock actual / consumo promedio diario.
+            # Como no tenemos rango temporal exacto, usamos el promedio por evento
+            # como proxy de consumo. Si no hubo salidas, no se puede estimar.
+            stock = p["stock_actual"]
+            if promedio_salida > 0:
+                dias_hasta_quiebre = int(stock / promedio_salida)
+            else:
+                dias_hasta_quiebre = None  # sin datos de rotación
+            filas.append({
+                "nombre": nombre,
+                "categoria": p["categoria"],
+                "stock_actual": stock,
+                "total_salidas": total_salidas,
+                "promedio_salida": promedio_salida,
+                "dias_hasta_quiebre": dias_hasta_quiebre,
+                "precio_costo": float(p["precio_costo"]),
+                "precio_venta": float(p["precio_venta"]),
+            })
+        # Ordenar de mayor a menor rotación (los que más se venden primero)
+        filas.sort(key=lambda x: x["total_salidas"], reverse=True)
+        return filas
+
+
 class GeneradorReporte:
     """
     Contexto del patrón Strategy.

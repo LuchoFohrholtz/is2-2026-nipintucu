@@ -21,6 +21,7 @@ from database import supabase, MARGEN_GANANCIA
 from models import (
     Alerta, OrdenReposicion,
     GeneradorReporte, ReporteReposicion, ReporteStockActual,
+    ReporteRotacion,
 )
 
 # ── PDF ────────────────────────────────────────────────────────
@@ -437,6 +438,55 @@ def get_reporte(tipo):
     productos = supabase.table("productos").select("*").order("id").execute().data
     return jsonify(gen.ejecutar(productos))
 
+
+@app.route("/api/reportes/rotacion", methods=["GET"])
+def get_reporte_rotacion():
+    """
+    Reporte de rotacion de inventario (patron Strategy).
+    Cruza productos con su historial de movimientos de salida.
+    """
+    productos   = supabase.table("productos").select("*").order("id").execute().data
+    # Traemos todos los movimientos (sin limite) para el calculo de rotacion
+    movimientos = supabase.table("movimientos").select("*").execute().data
+    gen = GeneradorReporte(ReporteRotacion(movimientos))
+    return jsonify(gen.ejecutar(productos))
+
+
+@app.route("/api/reportes/rotacion/csv", methods=["GET"])
+def exportar_rotacion_csv():
+    """
+    Exportacion a CSV para la materia Estadistica.
+    Columnas numericas reales para analisis (medias, desvios, correlaciones).
+    """
+    import csv
+    productos   = supabase.table("productos").select("*").order("id").execute().data
+    movimientos = supabase.table("movimientos").select("*").execute().data
+    gen   = GeneradorReporte(ReporteRotacion(movimientos))
+    datos = gen.ejecutar(productos)
+
+    buffer = io.StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow([
+        "producto", "categoria", "stock_actual", "total_salidas",
+        "promedio_salida", "dias_hasta_quiebre", "precio_costo", "precio_venta",
+    ])
+    for d in datos:
+        writer.writerow([
+            d["nombre"], d["categoria"], d["stock_actual"], d["total_salidas"],
+            d["promedio_salida"],
+            d["dias_hasta_quiebre"] if d["dias_hasta_quiebre"] is not None else "",
+            d["precio_costo"], d["precio_venta"],
+        ])
+
+    contenido = buffer.getvalue().encode("utf-8-sig")
+    buffer.close()
+    nombre_archivo = f"ferrerap_rotacion_{datetime.now().strftime('%Y%m%d_%H%M')}.csv"
+    return send_file(
+        io.BytesIO(contenido),
+        mimetype="text/csv",
+        as_attachment=True,
+        download_name=nombre_archivo,
+    )
 
 # ════════════════════════════════════════════════════════════
 #  EXPORTAR PDF
