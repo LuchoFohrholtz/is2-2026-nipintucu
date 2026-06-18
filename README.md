@@ -24,6 +24,7 @@ Sistema web de gestión de inventario para ferretería. Permite registrar produc
 * [Informe TP1](https://docs.google.com/document/d/1C3rg_HAe2fNjk1P0o_SO_F86wyOYUDYX/edit?usp=sharing&ouid=105019262908114217359&rtpof=true&sd=true)
 * [Documentación de Patrones de Diseño](https://github.com/LuchoFohrholtz/is2-2026-nipintucu/blob/main/docs/patrones-tp1.md)
 * [Prototipo en Figma (3 pantallas)](https://www.figma.com/make/CicSoOUwMEUprpSG9INYkZ/FerreRAP-Stock-Management-Prototype?t=ufxEOo6hIVvvNYoi-1)
+* [Link a la Página Web](https://is2-2026-nipintucu.vercel.app/).
 
 ---
 
