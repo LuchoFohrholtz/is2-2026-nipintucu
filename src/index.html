@@ -741,6 +741,17 @@ input:focus, select:focus {
 .btn-pdf:disabled, .btn-excel:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 .export-hint { font-size: .72rem; color: var(--muted2); font-style: italic; }
 
+/* ── AYUDA CONTEXTUAL (Nielsen H10) ── */
+.help-ico {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px; margin-left: 5px;
+  font-size: .68rem; font-weight: 700; cursor: help;
+  background: var(--azul-l); color: var(--azul);
+  border-radius: 50%; border: 1px solid var(--border2);
+  vertical-align: middle;
+}
+.help-ico:hover { background: var(--azul-btn); color: var(--on-primary); }
+
 @media (max-width: 900px) {
   .stats      { grid-template-columns: 1fr 1fr; }
   .grid-2     { grid-template-columns: 1fr; }
@@ -920,7 +931,7 @@ input:focus, select:focus {
                 <tr>
                   <th>#</th><th>Nombre</th><th>Categoría</th>
                   <th>P. Costo</th><th>P. Venta</th>
-                  <th>Stock</th><th>Mínimo</th><th>Estado</th>
+                  <th>Stock</th><th title="Cuando el stock cae por debajo de este número, el sistema genera una alerta automática.">Mínimo <span class="help-ico">?</span></th><th>Estado</th>
                 </tr>
               </thead>
               <tbody id="tbody-productos">
@@ -943,8 +954,8 @@ input:focus, select:focus {
 
       <!-- MODO TOGGLE -->
       <div class="mode-toggle">
-        <button class="mode-btn active" onclick="setModo('venta', this)">🛒 Venta (salida)</button>
-        <button class="mode-btn" onclick="setModo('entrada', this)">📥 Entrada (reposición)</button>
+      <button class="mode-btn active" onclick="setModo('venta', this)" title="Venta: registra una SALIDA de stock. Descuenta unidades del inventario (lo que el cliente compra).">🛒 Venta (salida)</button>
+        <button class="mode-btn" onclick="setModo('entrada', this)" title="Entrada: registra una REPOSICIÓN. Suma unidades al inventario (lo que llega del proveedor).">📥 Entrada (reposición)</button>
       </div>
 
       <!-- ── MODO VENTA ── -->
@@ -1209,7 +1220,9 @@ input:focus, select:focus {
                 <input type="number" id="np-costo" min="0" step="0.01" placeholder="0.00" oninput="autoCalcVenta()">
               </div>
               <div class="form-group">
-                <label>Precio de venta ($) * <small style="color:var(--muted)">(50% margen)</small></label>
+               <label>Precio de venta ($) *
+                  <span class="help-ico" title="Se calcula automáticamente sumando el margen de ganancia al precio de costo. Podés ajustarlo a mano si querés.">?</span>
+                </label>
                 <input type="number" id="np-venta" min="0" step="0.01" placeholder="0.00">
               </div>
             </div>
@@ -1219,7 +1232,9 @@ input:focus, select:focus {
                 <input type="number" id="np-stock" min="0" placeholder="0">
               </div>
               <div class="form-group">
-                <label>Stock mínimo * <small style="color:var(--muted)">(dispara alerta)</small></label>
+                <label>Stock mínimo *
+                  <span class="help-ico" title="Es el umbral de alerta. Cuando el stock actual baje de este valor, el sistema avisa automáticamente que hay que reponer.">?</span>
+                </label>
                 <input type="number" id="np-minimo" min="1" placeholder="5">
               </div>
             </div>
@@ -1510,10 +1525,16 @@ async function cargarStats() {
 //  PRODUCTOS + CATEGORÍAS + BUSCADOR + ORDENAMIENTO
 // ══════════════════════════════════════════════════════════
 async function cargarProductos() {
+  // Nielsen H1: mostrar estado de carga mientras llegan los datos
+  const tbCarga = document.getElementById('tbody-productos');
+  if (tbCarga) tbCarga.innerHTML = '<tr><td colspan="8" class="empty">⏳ Cargando productos...</td></tr>';
   try {
     const r = await fetch('/api/productos');
     todosLosProductos = await r.json();
-  } catch(e) { return; }
+  } catch(e) {
+    if (tbCarga) tbCarga.innerHTML = '<tr><td colspan="8" class="empty" style="color:var(--rojo)">⚠️ No se pudo conectar con el servidor. Revisá tu conexión.</td></tr>';
+    return;
+  }
 
   cargarStats();
   renderCategorias();
@@ -1622,8 +1643,8 @@ function renderTablaProductos(lista) {
       <td class="mono" style="font-weight:700;color:${p.bajo_stock ? 'var(--rojo)' : 'var(--verde)'}">${p.stock_actual}</td>
       <td class="mono">${p.stock_minimo}</td>
       <td>${p.bajo_stock
-        ? '<span class="badge badge-danger">Stock bajo</span>'
-        : '<span class="badge badge-ok">OK</span>'}</td>
+        ? '<span class="badge badge-danger" title="Este producto está en rojo porque su stock actual es menor al mínimo definido. Conviene reponerlo.">Stock bajo</span>'
+        : '<span class="badge badge-ok" title="El stock de este producto está por encima del mínimo. No requiere reposición.">OK</span>'}</td>
     </tr>
   `).join('');
 }
@@ -1792,6 +1813,16 @@ function vaciarCarrito() {
 async function confirmarVenta() {
   if (carrito.length === 0) { toast('El carrito está vacío.', 'warn'); return; }
 
+  // Nielsen H1: bloquear botón y mostrar estado para evitar doble clic / venta duplicada
+  const btnConfirmar = document.querySelector('#cart-footer .btn-success');
+  const textoOriginal = btnConfirmar ? btnConfirmar.innerHTML : '';
+  if (btnConfirmar) {
+    btnConfirmar.disabled = true;
+    btnConfirmar.innerHTML = '⏳ Procesando...';
+    btnConfirmar.style.opacity = '0.7';
+    btnConfirmar.style.cursor = 'wait';
+  }
+
   const body = {
     usuario:     sesion.usuario,
     metodo_pago: metodoPagoActivo,
@@ -1841,6 +1872,14 @@ async function confirmarVenta() {
     }
   } catch(e) {
     toast('Error al procesar la venta.', 'error');
+  } finally {
+    // Nielsen H1: restaurar el botón pase lo que pase
+    if (btnConfirmar) {
+      btnConfirmar.disabled = false;
+      btnConfirmar.innerHTML = textoOriginal;
+      btnConfirmar.style.opacity = '';
+      btnConfirmar.style.cursor = '';
+    }
   }
 }
 
@@ -2116,7 +2155,16 @@ async function registrarEntrada() {
   const precioVenta = parseFloat(document.getElementById('entrada-venta').value) || 0;
   const motivo = document.getElementById('entrada-motivo').value || 'Reposición';
 
-  if (cantidad <= 0) { toast('La cantidad debe ser mayor a cero.', 'error'); return; }
+if (cantidad <= 0) { toast('La cantidad debe ser mayor a cero.', 'error'); return; }
+
+  // Nielsen H1: bloquear botón mientras procesa
+  const btnEntrada = document.querySelector('#modo-entrada .btn-primary');
+  const txtEntrada = btnEntrada ? btnEntrada.innerHTML : '';
+  if (btnEntrada) {
+    btnEntrada.disabled = true;
+    btnEntrada.innerHTML = '⏳ Procesando...';
+    btnEntrada.style.opacity = '0.7';
+  }
 
   try {
     const r = await fetch('/api/movimientos', {
@@ -2162,6 +2210,12 @@ async function registrarEntrada() {
     checkBanner();
   } catch(e) {
     toast('Error al registrar entrada.', 'error');
+  } finally {
+    if (btnEntrada) {
+      btnEntrada.disabled = false;
+      btnEntrada.innerHTML = txtEntrada;
+      btnEntrada.style.opacity = '';
+    }
   }
 }
 
