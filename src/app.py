@@ -180,6 +180,7 @@ def crear_producto():
     return jsonify(p), 201
 
 @app.route("/api/productos/<int:pid>/precio", methods=["PUT"])
+@app.route("/api/productos/<int:pid>/precio", methods=["PUT"])
 def actualizar_precio(pid):
     d = request.json or {}
     update = {}
@@ -189,6 +190,43 @@ def actualizar_precio(pid):
         return jsonify({"error": "Nada que actualizar."}), 400
     supabase.table("productos").update(update).eq("id", pid).execute()
     return jsonify({"ok": True})
+
+
+@app.route("/api/productos/<int:pid>", methods=["PUT"])
+def editar_producto(pid):
+    """Edita todos los campos de un producto existente (CRUD - Update)."""
+    d = request.json or {}
+    errores = []
+    if not d.get("nombre"):    errores.append("El nombre es obligatorio.")
+    if not d.get("categoria"): errores.append("La categoria es obligatoria.")
+    try:    float(d.get("precio_costo", "x"))
+    except: errores.append("El precio de costo debe ser un numero.")
+    try:    float(d.get("precio_venta", "x"))
+    except: errores.append("El precio de venta debe ser un numero.")
+    try:    int(d.get("stock_minimo", "x"))
+    except: errores.append("El stock minimo debe ser entero.")
+    if errores:
+        return jsonify({"error": " | ".join(errores)}), 400
+
+    # Verificar que el producto exista
+    existe = supabase.table("productos").select("id").eq("id", pid).execute()
+    if not existe.data:
+        return jsonify({"error": "Producto no encontrado."}), 404
+
+    update = {
+        "nombre": d["nombre"],
+        "descripcion": d.get("descripcion", ""),
+        "precio_costo": float(d["precio_costo"]),
+        "precio_venta": float(d["precio_venta"]),
+        "stock_minimo": int(d["stock_minimo"]),
+        "categoria": d["categoria"],
+    }
+    result = supabase.table("productos").update(update).eq("id", pid).execute()
+    p = result.data[0]
+    p["bajo_stock"] = p["stock_actual"] < p["stock_minimo"]
+    p["precio_costo"] = float(p["precio_costo"])
+    p["precio_venta"] = float(p["precio_venta"])
+    return jsonify(p), 200
 
 
 # ════════════════════════════════════════════════════════════

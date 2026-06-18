@@ -565,7 +565,9 @@ tbody tr:hover   { background: var(--surface2); }
   background: var(--surface); border: 1px solid var(--border);
   border-radius: 12px; width: 100%; max-width: 480px;
   box-shadow: var(--shadow-md); overflow: hidden;
+  max-height: 90vh; display: flex; flex-direction: column;
 }
+.modal-factura-body { overflow-y: auto; }
 .modal-factura-header {
   background: var(--surface2); padding: 14px 20px;
   border-bottom: 1px solid var(--border);
@@ -931,11 +933,11 @@ input:focus, select:focus {
                 <tr>
                   <th>#</th><th>Nombre</th><th>Categoría</th>
                   <th>P. Costo</th><th>P. Venta</th>
-                  <th>Stock</th><th title="Cuando el stock cae por debajo de este número, el sistema genera una alerta automática.">Mínimo <span class="help-ico">?</span></th><th>Estado</th>
+                  <th>Stock</th><th title="Cuando el stock cae por debajo de este número, el sistema genera una alerta automática.">Mínimo <span class="help-ico">?</span></th><th>Estado</th><th>Acciones</th>
                 </tr>
               </thead>
               <tbody id="tbody-productos">
-                <tr><td colspan="8" class="empty">Cargando...</td></tr>
+              <tr><td colspan="9" class="empty">Cargando...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1252,6 +1254,59 @@ input:focus, select:focus {
 
 <div id="toast"></div>
 
+<!-- MODAL DE EDICIÓN DE PRODUCTO (CRUD - Update) -->
+<div class="modal-factura-overlay" id="modal-editar">
+  <div class="modal-factura">
+    <div class="modal-factura-header">
+      <h3>✏️ Editar producto</h3>
+      <button class="btn-icon" onclick="cerrarModalEditar()" style="font-size:1rem">✕</button>
+    </div>
+    <div class="modal-factura-body">
+      <input type="hidden" id="ed-id">
+      <div class="form-group">
+        <label>Nombre *</label>
+        <input type="text" id="ed-nombre">
+      </div>
+      <div class="form-group">
+        <label>Descripción</label>
+        <input type="text" id="ed-desc">
+      </div>
+      <div class="form-group">
+        <label>Categoría *</label>
+        <select id="ed-cat">
+          <option>Herramientas</option>
+          <option>Electricidad</option>
+          <option>Plomería</option>
+          <option>Pinturas</option>
+          <option>Fijaciones</option>
+          <option>Adhesivos</option>
+          <option>Otra</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Precio de costo ($) *</label>
+          <input type="number" id="ed-costo" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Precio de venta ($) *</label>
+          <input type="number" id="ed-venta" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Stock mínimo *
+          <span class="help-ico" title="Umbral de alerta. El stock actual no se edita acá: cambia solo con ventas y entradas.">?</span>
+        </label>
+        <input type="number" id="ed-minimo" min="1">
+      </div>
+    </div>
+    <div class="modal-factura-footer">
+      <button class="btn btn-ghost" onclick="cerrarModalEditar()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEdicion()">✓ Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL DE ALERTA -->
 <div class="modal-overlay" id="modal-alerta">
   <div class="modal">
@@ -1401,6 +1456,8 @@ async function hacerLogin() {
     const d = await r.json();
     if (d.ok) {
       sesion = { usuario: d.usuario, rol: d.rol };
+      // Persistir sesión para que sobreviva al refresco (Nielsen: control del usuario)
+      try { localStorage.setItem('ferrerap_sesion', JSON.stringify(sesion)); } catch(e) {}
       errEl.style.display = 'none';
       iniciarApp();
     } else {
@@ -1444,6 +1501,7 @@ async function iniciarApp() {
 function cerrarSesion() {
   sesion = { usuario: null, rol: null };
   carrito = [];
+  try { localStorage.removeItem('ferrerap_sesion'); } catch(e) {}
   document.getElementById('pantalla-app').style.display  = 'none';
   document.getElementById('pantalla-login').style.display = 'flex';
   document.getElementById('l-usuario').value  = '';
@@ -1647,6 +1705,7 @@ function renderTablaProductos(lista) {
       <td>${p.bajo_stock
         ? '<span class="badge badge-danger" title="Este producto está en rojo porque su stock actual es menor al mínimo definido. Conviene reponerlo.">Stock bajo</span>'
         : '<span class="badge badge-ok" title="El stock de este producto está por encima del mínimo. No requiere reposición.">OK</span>'}</td>
+      <td><button class="btn btn-sm btn-outline" onclick="abrirModalEditar(${p.id})" title="Editar este producto">✏️ Editar</button></td>
     </tr>
   `).join('');
 }
@@ -2537,6 +2596,63 @@ async function cargarReporteRotacion() {
 }
 
 // ══════════════════════════════════════════════════════════
+//  EDITAR PRODUCTO (CRUD - Update)
+// ══════════════════════════════════════════════════════════
+function abrirModalEditar(pid) {
+  if (sesion.rol !== 'Administrador') {
+    toast('Solo el Administrador puede editar productos.', 'error');
+    return;
+  }
+  const p = todosLosProductos.find(x => x.id === pid);
+  if (!p) { toast('Producto no encontrado.', 'error'); return; }
+
+  document.getElementById('ed-id').value     = p.id;
+  document.getElementById('ed-nombre').value = p.nombre;
+  document.getElementById('ed-desc').value   = p.descripcion || '';
+  document.getElementById('ed-cat').value    = p.categoria;
+  document.getElementById('ed-costo').value  = p.precio_costo;
+  document.getElementById('ed-venta').value  = p.precio_venta;
+  document.getElementById('ed-minimo').value = p.stock_minimo;
+
+  document.getElementById('modal-editar').classList.add('open');
+}
+
+function cerrarModalEditar() {
+  document.getElementById('modal-editar').classList.remove('open');
+}
+
+async function guardarEdicion() {
+  const pid = parseInt(document.getElementById('ed-id').value);
+  const body = {
+    nombre:       document.getElementById('ed-nombre').value.trim(),
+    descripcion:  document.getElementById('ed-desc').value.trim(),
+    categoria:    document.getElementById('ed-cat').value,
+    precio_costo: document.getElementById('ed-costo').value,
+    precio_venta: document.getElementById('ed-venta').value,
+    stock_minimo: document.getElementById('ed-minimo').value,
+  };
+  if (!body.nombre || !body.categoria || !body.precio_costo || !body.precio_venta || !body.stock_minimo) {
+    toast('Completá todos los campos obligatorios (*)', 'error');
+    return;
+  }
+  try {
+    const r = await fetch(`/api/productos/${pid}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await r.json();
+    if (!r.ok) { toast(data.error, 'error'); return; }
+    toast(`Producto "${body.nombre}" actualizado`);
+    cerrarModalEditar();
+    cargarProductos();
+    checkBanner();
+  } catch(e) {
+    toast('Error al actualizar el producto.', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
 //  NUEVO PRODUCTO
 // ══════════════════════════════════════════════════════════
 async function crearProducto() {
@@ -2575,6 +2691,20 @@ async function crearProducto() {
     toast('Error al registrar producto', 'error');
   }
 }
+
+// ── Restaurar sesión al cargar la página (si existe) ──
+(function restaurarSesion() {
+  try {
+    const guardada = localStorage.getItem('ferrerap_sesion');
+    if (guardada) {
+      const s = JSON.parse(guardada);
+      if (s && s.usuario && s.rol) {
+        sesion = s;
+        iniciarApp();
+      }
+    }
+  } catch(e) {}
+})();
 </script>
 </body>
 </html>
