@@ -1168,9 +1168,9 @@ input:focus, select:focus {
       </div>
       <div class="card" style="margin-top:1rem">
         <div class="tabla-wrap">
-          <table>
+        <table>
             <thead>
-              <tr>
+              <tr id="thead-reporte">
                 <th>Nombre</th><th>Categoría</th>
                 <th>Stock</th><th>Mínimo</th>
                 <th>Costo</th><th>Venta</th><th>Estado</th>
@@ -2430,6 +2430,11 @@ async function cargarReporte(tipo) {
   reporteActivo = tipo;
   document.getElementById('btn-rep-repos').className = 'btn btn-sm ' + (tipo === 'reposicion' ? 'btn-primary' : 'btn-outline');
   document.getElementById('btn-rep-stock').className = 'btn btn-sm ' + (tipo === 'stock' ? 'btn-primary' : 'btn-outline');
+  const btnRot = document.getElementById('btn-rep-rotacion');
+  if (btnRot) btnRot.className = 'btn btn-sm btn-outline';
+  // Restaurar encabezados originales (por si venía del reporte de rotación)
+  document.getElementById('thead-reporte').innerHTML =
+    '<th>Nombre</th><th>Categoría</th><th>Stock</th><th>Mínimo</th><th>Costo</th><th>Venta</th><th>Estado</th>';
   document.getElementById('btn-export-pdf').disabled   = false;
   document.getElementById('btn-export-excel').disabled = false;
 
@@ -2503,6 +2508,10 @@ async function cargarReporteRotacion() {
 
     ea.textContent = 'Estrategia activa: ReporteRotacion';
     hint.innerHTML = `${data.length} productos analizados · <a href="/api/reportes/rotacion/csv" style="color:var(--azul);font-weight:600">⬇ Descargar CSV para Estadística</a>`;
+
+    // Encabezados propios del reporte de rotación
+    document.getElementById('thead-reporte').innerHTML =
+      '<th>Producto</th><th>Categoría</th><th>Total salidas</th><th>Prom. salida</th><th>Stock actual</th><th>Días hasta quiebre</th><th>Rotación</th>';
 
     if (data.length === 0) {
       tb.innerHTML = '<tr><td colspan="7" class="empty">Sin datos de rotación</td></tr>';
