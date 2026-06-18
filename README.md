@@ -12,7 +12,7 @@ Sistema web de gestión de inventario para ferretería. Permite registrar produc
 | Santiago Gonzalez  | Scrum Master | [@santi-ngonzalez](https://github.com/santi-ngonzalez) |
 | Luciano Fohrholtz  | Dev Lead     | [@luchofohrholz](https://github.com/luchofohrholtz)  |
 | Juan Carlos Abente | QA Lead      | [@juankiabente](https://github.com/juankiabente)     |
-| Mariano Acosta     | UX Lead      | [@mittax6](https://github.com/mittax6)               |
+| Mariano Acosta     | UX Lead      | [@emiauras](https://github.com/emiauras)               |
 
 ---
 
@@ -146,6 +146,48 @@ Cuando el stock de un producto cae por debajo del mínimo configurado, el sistem
 ### Strategy — Comportamental
 Aplicado en el módulo de reportes a través de `GeneradorReporte` y las estrategias `ReporteReposicion` y `ReporteStockActual`.
 Permite intercambiar el algoritmo de generación de reportes en tiempo de ejecución sin modificar el código del contexto.
+
+---
+
+## Mejora integradora — Reporte de Rotación de Inventario
+
+Como evolución del sistema (TP Integrador), se incorporó un **Reporte de Rotación de Inventario** que analiza el movimiento real de las ventas, además de varias mejoras de usabilidad basadas en las heurísticas de Nielsen.
+
+### Qué resuelve
+
+El sistema registraba todos los movimientos de stock pero **nunca los analizaba**. No se podía saber qué productos rotan rápido, cuáles están estancados, ni cuántos días faltan para que un producto se agote. Esta mejora cruza los productos con su historial de movimientos y calcula, por producto: total de unidades vendidas, promedio por movimiento de salida y días estimados hasta el quiebre de stock.
+
+### Cómo se implementó (sin romper lo existente)
+
+- **`models.py`** — Nueva estrategia `ReporteRotacion(EstrategiaReporte)` que implementa la misma interfaz que las estrategias previas. **No se modificó `GeneradorReporte` ni las estrategias existentes**, demostrando la extensibilidad del patrón **Strategy**.
+- **`app.py`** — Dos endpoints nuevos: `GET /api/reportes/rotacion` (reporte en JSON) y `GET /api/reportes/rotacion/csv` (exportación para Estadística).
+- **`index.html`** — Botón "Rotación de inventario" en el selector de reportes, con encabezados de tabla propios y enlace de descarga del CSV.
+
+### Integración con Estadística
+
+El endpoint `/api/reportes/rotacion/csv` genera un archivo CSV con columnas numéricas reales (`total_salidas`, `promedio_salida`, `dias_hasta_quiebre`, `precio_costo`, `precio_venta`) aptas para análisis estadístico (medias, desvíos, correlaciones). Ejemplo:
+
+```csv
+producto,categoria,stock_actual,total_salidas,promedio_salida,dias_hasta_quiebre,precio_costo,precio_venta
+Cable 2.5mm x mt,Electricidad,22,189,4.61,4,233.0,350.0
+Destornillador Ph,Herramientas,15,45,2.05,7,530.0,795.0
+Martillo 500g,Herramientas,2,13,1.18,1,1000.0,1500.0
+```
+
+### Verificación
+
+El cálculo se valida con una prueba unitaria en `tests/test_rotacion.py`, independiente de la base de datos. Ejecutar con:
+
+```bash
+pytest tests/test_rotacion.py -v
+```
+
+### Otras mejoras del sprint integrador
+
+- **Ayuda contextual (Nielsen H10)** — Tooltips e iconos de ayuda en campos e indicadores clave (stock mínimo, estados, entrada vs. venta).
+- **Visibilidad del estado (Nielsen H1)** — Indicadores de carga y bloqueo de botones durante el procesamiento, para evitar ventas duplicadas por doble clic.
+- **Edición de productos** — Edición de todos los campos de un producto (CRUD - Update) desde un formulario modal, con control por rol.
+- **Sesión persistente** — La sesión del usuario se mantiene al refrescar la página.
 
 ---
 
